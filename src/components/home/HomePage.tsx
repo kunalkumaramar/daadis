@@ -116,6 +116,7 @@ export const HomePage = () => {
       <Button
         variant="ghost"
         className="fixed bg-white hover:bg-green-500 hover:fill-white p-2 h-auto m-0 rounded-full z-[200] transition-all bottom-[5%] right-[5%]"
+        onClick={() => window.open('https://wa.me/919886402902', '_blank')}
       >
         {/* WhatsApp SVG */}
         <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 32 32">
