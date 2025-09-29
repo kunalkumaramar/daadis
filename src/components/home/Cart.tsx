@@ -206,7 +206,7 @@ export const Cart: React.FC = () => {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   const [couponCode, setCouponCode] = useState("");
-  //const [localDiscountValue] = useState(0);
+  const [localDiscountValue] = useState(0);
   const [couponApplied, setCouponApplied] = useState(false);
 
   const currentDiscount = useSelector(selectCurrentDiscount);
@@ -218,12 +218,7 @@ export const Cart: React.FC = () => {
   
   const subtotal = cartTotals?.total || 0;
   // Calculate actual discount amount from Redux state
-  const discountAmount = couponApplied && currentDiscount
-    ? currentDiscount.discountType === "percentage"
-        ? (subtotal * currentDiscount.value) / 100
-        : currentDiscount.value  // For "fixed" type discounts
-    : 0;
-  
+  const discountAmount = localDiscountValue;
   // Calculate shipping based on ORIGINAL subtotal (before discount)
   const calculateShippingCharge = (amount: number): number => {
     if (amount >= 1000) {
