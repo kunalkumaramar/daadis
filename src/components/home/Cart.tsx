@@ -206,7 +206,7 @@ export const Cart: React.FC = () => {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   const [couponCode, setCouponCode] = useState("");
-  const [localDiscountValue] = useState(0);
+  //const [localDiscountValue] = useState(0);
   const [couponApplied, setCouponApplied] = useState(false);
 
   const currentDiscount = useSelector(selectCurrentDiscount);
@@ -217,19 +217,19 @@ export const Cart: React.FC = () => {
   //const shippingCharge = 50; // Rs 10 fixed
   
   const subtotal = cartTotals?.total || 0;
-  const discountAmount = localDiscountValue;
+ // Work out how much the applied coupon really removes
+  const discountAmount =
+  couponApplied && currentDiscount
+    ? currentDiscount.discountType === "percentage"
+        ? (subtotal * currentDiscount.value) / 100
+        : currentDiscount.value
+    : 0;   
   const calcTotalBeforeTax = subtotal - discountAmount;
-  // Dynamic shipping charge calculation based on subtotal after discount
-  const calculateShippingCharge = (amount: number): number => {
-    if (amount >= 1000) {
-      return 0; // Free shipping for orders 1000+
-    } else if (amount >= 500) {
-      return 50; // Rs 50 for orders 500-999
-    } else {
-      return 100; // Rs 100 for orders 0-499
-    }
-  };
-  const shippingCharge = calculateShippingCharge(calcTotalBeforeTax);
+  // Dynamic shipping logic
+  const shippingCharge =
+  calcTotalBeforeTax >= 1000 ? 0         // ≥ ₹1000 ⇒ free shipping
+  : calcTotalBeforeTax >= 500 ? 50       // ₹500–₹999 ⇒ ₹50
+  : 100;                                 // < ₹500    ⇒ ₹100
   const grandTotal = calcTotalBeforeTax + shippingCharge;
 
   useEffect(() => {
