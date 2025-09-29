@@ -214,11 +214,22 @@ export const Cart: React.FC = () => {
   const discountFetchError = useSelector(selectDiscountError);
   const removeDiscountLoading = useSelector(selectRemoveDiscountLoading);
   
-  const shippingCharge = 50; // Rs 10 fixed
+  //const shippingCharge = 50; // Rs 10 fixed
   
   const subtotal = cartTotals?.total || 0;
   const discountAmount = localDiscountValue;
   const calcTotalBeforeTax = subtotal - discountAmount;
+  // Dynamic shipping charge calculation based on subtotal after discount
+  const calculateShippingCharge = (amount: number): number => {
+    if (amount >= 1000) {
+      return 0; // Free shipping for orders 1000+
+    } else if (amount >= 500) {
+      return 50; // Rs 50 for orders 500-999
+    } else {
+      return 100; // Rs 100 for orders 0-499
+    }
+  };
+  const shippingCharge = calculateShippingCharge(calcTotalBeforeTax);
   const grandTotal = calcTotalBeforeTax + shippingCharge;
 
   useEffect(() => {
