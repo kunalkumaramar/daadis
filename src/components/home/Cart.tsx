@@ -206,32 +206,31 @@ export const Cart: React.FC = () => {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   const [couponCode, setCouponCode] = useState("");
-  const [localDiscountValue] = useState(0);
-  const [couponApplied, setCouponApplied] = useState(false);
+const [couponApplied, setCouponApplied] = useState(false);
 
-  const currentDiscount = useSelector(selectCurrentDiscount);
-  const discountLoading = useSelector(selectDiscountLoading);
-  const discountFetchError = useSelector(selectDiscountError);
-  const removeDiscountLoading = useSelector(selectRemoveDiscountLoading);
-  
-  //const shippingCharge = 50; // Rs 10 fixed
-  
-  const subtotal = cartTotals?.total || 0;
-  // Calculate actual discount amount from Redux state
-  const discountAmount = localDiscountValue;
-  // Calculate shipping based on ORIGINAL subtotal (before discount)
-  const calculateShippingCharge = (amount: number): number => {
-    if (amount >= 1000) {
-      return 0; // Free shipping for orders 1000+
-    } else if (amount >= 500) {
-      return 50; // Rs 50 for orders 500-999
-    } else {
-      return 100; // Rs 100 for orders 0-499
-    }
-  };
-  const shippingCharge = calculateShippingCharge(subtotal);
-  const calcTotalBeforeTax = subtotal - discountAmount;
-  const grandTotal = calcTotalBeforeTax + shippingCharge;
+const currentDiscount = useSelector(selectCurrentDiscount);
+const discountLoading = useSelector(selectDiscountLoading);
+const discountFetchError = useSelector(selectDiscountError);
+const removeDiscountLoading = useSelector(selectRemoveDiscountLoading);
+
+// Get values from backend response
+const originalSubtotal = cartTotals?.subtotal || 0;    // 360 (original price)
+const discountAmount = cartTotals?.discountAmount || 0; // 72 (discount amount)
+const finalTotal = cartTotals?.total || 0;             // 288 (after discount)
+
+// Calculate shipping based on ORIGINAL subtotal (before discount)
+const calculateShippingCharge = (amount: number): number => {
+  if (amount >= 1000) {
+    return 0; // Free shipping for orders 1000+
+  } else if (amount >= 500) {
+    return 50; // Rs 50 for orders 500-999
+  } else {
+    return 100; // Rs 100 for orders 0-499
+  }
+};
+
+const shippingCharge = calculateShippingCharge(originalSubtotal); // Use original subtotal
+const grandTotal = finalTotal + shippingCharge; // Use already discounted total + shipping
 
   useEffect(() => {
     dispatch(fetchCartDetails());
@@ -542,7 +541,7 @@ export const Cart: React.FC = () => {
               <div className="space-y-3 mb-4">
                 <div className="flex justify-between text-gray-600">
                   <span>Subtotal:</span>
-                  <span>₹{subtotal.toFixed(2)}</span>
+                  <span>₹{originalSubtotal.toFixed(2)}</span>
                 </div>
                 {discountAmount > 0 && (
                   <div className="flex justify-between text-green-600">
