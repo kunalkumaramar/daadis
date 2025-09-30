@@ -39,7 +39,7 @@ export const sendInfluencerEmail = createAsyncThunk<
   'contact/sendInfluencerEmail',
   async (contactData: ContactFormData, { rejectWithValue }) => {
     try {
-      console.log('Making API call to:', `${BASE_URL}/auth/send-influencer-email`);
+      //console.log('Making API call to:', `${BASE_URL}/auth/send-influencer-email`);
       
       const response = await fetch(`${BASE_URL}/auth/send-influencer-email`, {
         method: 'POST',
