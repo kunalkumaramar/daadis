@@ -8,6 +8,7 @@ import discountSliceReducer from "./discountSlice";
 import cartSliceReducer from "./cartSlice";
 import paymentSliceReducer from "./paymentSlice";
 import blogSliceReducer from "./blogSlice";
+import contactReducer from "./contactSlice";
 export const store = configureStore({
     reducer: combineReducers({ 
         cart: cartSliceReducer,
@@ -19,6 +20,7 @@ export const store = configureStore({
         discount: discountSliceReducer,
         payment: paymentSliceReducer,
         blogs: blogSliceReducer,
+        contact: contactReducer
     }),
 });
 
