@@ -83,6 +83,21 @@ const HomeBlogCard = ({ blog }: { blog: Blog }) => {
   );
 };
 
+// Simple auto-sliding image component for the responsive section
+const AutoImageSlider = ({ images, imgClassName }: { images: string[]; imgClassName: string }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % images.length);
+    }, 10000); // Auto-change every 10 seconds
+
+    return () => clearInterval(interval);
+  }, [images.length]);
+
+  return <img src={images[currentIndex]} alt="Featured content" className={imgClassName} />;
+};
+
 export const HomePage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -110,6 +125,18 @@ export const HomePage = () => {
     if (products) setTopProducts(products);
   }, [products]);
 
+  // Define your two Cloudinary image URLs for desktop and mobile here
+  // Replace with actual URLs as needed
+  const desktopImages = [
+    "https://res.cloudinary.com/dmrgscauc/image/upload/v1760186276/1_i0pmem.png",
+    "https://res.cloudinary.com/dmrgscauc/image/upload/v1760186276/2_qedwho.png", // Add your second desktop image URL
+  ];
+
+  const mobileImages = [
+    "https://res.cloudinary.com/dmrgscauc/image/upload/v1760186268/1_icapal.png",
+    "https://res.cloudinary.com/dmrgscauc/image/upload/v1760186268/2_esjbkg.png", // Add your second mobile image URL
+  ];
+
   return (
     <div className="mt-14 font-[quicksand]">
       {/* Floating WhatsApp Button */}
@@ -130,17 +157,15 @@ export const HomePage = () => {
       {/* Hero carousel */}
       <HomePageHeroCarousel />
 
-      {/* Responsive Image Section */}
+      {/* Responsive Image Section with Auto-Slider */}
       <div className="w-full flex justify-center py-4 px-4">
-        <img
-          src="https://res.cloudinary.com/dmrgscauc/image/upload/v1758788174/Untitled_design_8_psjjq5.png"
-          alt="Featured content"
-          className="hidden sm:block rounded-[1.5rem] max-w-[88rem] w-full h-auto object-cover"
+        <AutoImageSlider
+          images={desktopImages}
+          imgClassName="hidden sm:block rounded-[1.5rem] max-w-[88rem] w-full h-auto object-cover"
         />
-        <img
-          src="https://res.cloudinary.com/dmrgscauc/image/upload/v1758788169/Untitled_design_9_gdlw6t.png" 
-          alt="Featured content"
-          className="block sm:hidden rounded-[1.5rem] max-w-sm w-full h-auto object-cover"
+        <AutoImageSlider
+          images={mobileImages}
+          imgClassName="block sm:hidden rounded-[1.5rem] max-w-sm w-full h-auto object-cover"
         />
       </div>
 
