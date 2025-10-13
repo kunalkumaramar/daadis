@@ -657,10 +657,10 @@ const handleSave = async (field: keyof EditableField) => {
                             className="text-sm"
                           />
                         </div>
-                        {/*<Button onClick={addAddress} className="w-full text-sm">
+                        <Button onClick={addAddress} className="w-full text-sm">
                           <Plus className="w-4 h-4 mr-2" />
                           Add Address
-                        </Button>*/}
+                        </Button>
                       </div>
 
                       {/* Save/Cancel buttons */}
