@@ -37,6 +37,7 @@ import { Avatar } from "@mui/material";
 import { HomePageNavBar } from './HomePageNavBar';
 import { Footer } from './Footer';
 
+
 interface EditableField {
   firstName: boolean;
   lastName: boolean;
@@ -45,6 +46,7 @@ interface EditableField {
   addresses: boolean;
 }
 
+
 interface UserForm {
   firstName: string;
   lastName: string;
@@ -52,6 +54,7 @@ interface UserForm {
   phoneNumber: string;
   addresses: Address[];
 }
+
 
 const ProfilePage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -65,6 +68,7 @@ const ProfilePage: React.FC = () => {
   const ordersLoading = useSelector((state: RootState) => state.order.loading);
   const statsLoading = useSelector((state: RootState) => state.order.statsLoading);
   const cancelLoading = useSelector((state: RootState) => state.order.cancelLoading);
+
 
   // Local state
   const [editingFields, setEditingFields] = useState<EditableField>({
@@ -83,16 +87,19 @@ const ProfilePage: React.FC = () => {
     addresses: []
   });
 
+
   const [newAddress, setNewAddress] = useState<Address>({
     name: '',
     addressLine1: '',
     city: '',
     state: '',
     pinCode: '',
-    isDefault: false
+    isDefault: true // Set default to true
   });
 
+
   const [activeTab, setActiveTab] = useState<'profile' | 'orders'>('profile');
+
 
   // Initialize form data when user data loads
   useEffect(() => {
@@ -107,6 +114,7 @@ const ProfilePage: React.FC = () => {
     }
   }, [user]);
 
+
   // Fetch data on component mount
   useEffect(() => {
     if (!user) {
@@ -116,6 +124,7 @@ const ProfilePage: React.FC = () => {
     dispatch(fetchOrderStats());
   }, [dispatch, user]);
 
+
   // Handle field editing
   const toggleEdit = (field: keyof EditableField) => {
     setEditingFields(prev => ({
@@ -124,6 +133,7 @@ const ProfilePage: React.FC = () => {
     }));
   };
 
+
   // Handle form input changes
   const handleInputChange = (field: keyof UserForm, value: string) => {
     setFormData(prev => ({
@@ -131,6 +141,7 @@ const ProfilePage: React.FC = () => {
       [field]: value
     }));
   };
+
 
   // Handle address changes
   const handleAddressChange = (index: number, field: keyof Address, value: string | boolean) => {
@@ -142,25 +153,6 @@ const ProfilePage: React.FC = () => {
     }));
   };
 
-  // Add new address
-  const addAddress = () => {
-    if (newAddress.name && newAddress.addressLine1 && newAddress.city) {
-      setFormData(prev => ({
-        ...prev,
-        addresses: [...prev.addresses, newAddress]
-      }));
-      setNewAddress({
-        name: '',
-        addressLine1: '',
-        city: '',
-        state: '',
-        pinCode: '',
-        isDefault: false
-      });
-    } else {
-      toast.error('Please fill required address fields');
-    }
-  };
 
   // Remove address
   const removeAddress = (index: number) => {
@@ -170,66 +162,70 @@ const ProfilePage: React.FC = () => {
     }));
   };
 
-  // Save profile changes
-const handleSave = async (field: keyof EditableField) => {
-  try {
-    const updateData: any = {};
-    
-    if (field === 'addresses') {
-      // Check if there's a pending new address with required fields filled
-      const hasPendingAddress = newAddress.name.trim() !== '' || 
-                                newAddress.addressLine1.trim() !== '' || 
-                                newAddress.city.trim() !== '';
-      
-      if (hasPendingAddress) {
-        // Validate required fields
-        if (!newAddress.name || !newAddress.addressLine1 || !newAddress.city) {
-          toast.error('Please complete all required address fields (Name, Address Line, City) or clear them before saving');
-          return;
-        }
-        
-        // Add the pending address to formData before saving
-        const updatedAddresses = [...formData.addresses, newAddress];
-        updateData.addresses = updatedAddresses;
-        
-        // Clear the new address form after adding
-        setNewAddress({
-          name: '',
-          addressLine1: '',
-          city: '',
-          state: '',
-          pinCode: '',
-          isDefault: false
-        });
-      } else {
-        updateData.addresses = formData.addresses;
-      }
-    } else {
-      updateData[field] = formData[field as keyof UserForm];
-    }
 
-    await dispatch(updateProfile(updateData)).unwrap();
-    toast.success('Profile updated successfully');
-    setEditingFields(prev => ({ ...prev, [field]: false }));
-    
-    // Update formData with the new addresses if we added a pending one
-    if (field === 'addresses' && updateData.addresses) {
-      setFormData(prev => ({
-        ...prev,
-        addresses: updateData.addresses
-      }));
+  // Save profile changes
+  const handleSave = async (field: keyof EditableField) => {
+    try {
+      const updateData: any = {};
+      
+      if (field === 'addresses') {
+        // Check if there's a pending new address with required fields filled
+        const hasPendingAddress = newAddress.name.trim() !== '' || 
+                                  newAddress.addressLine1.trim() !== '' || 
+                                  newAddress.city.trim() !== '';
+        
+        if (hasPendingAddress) {
+          // Validate required fields
+          if (!newAddress.name.trim() || !newAddress.addressLine1.trim() || !newAddress.city.trim()) {
+            toast.error('Please complete all required address fields (Name, Address Line, City) or clear them before saving');
+            return;
+          }
+          
+          // Add the pending address to formData before saving
+          const updatedAddresses = [...formData.addresses, newAddress];
+          updateData.addresses = updatedAddresses;
+          
+          // Clear the new address form after adding
+          setNewAddress({
+            name: '',
+            addressLine1: '',
+            city: '',
+            state: '',
+            pinCode: '',
+            isDefault: true // Reset to default checked
+          });
+        } else {
+          updateData.addresses = formData.addresses;
+        }
+      } else {
+        updateData[field] = formData[field as keyof UserForm];
+      }
+
+
+      await dispatch(updateProfile(updateData)).unwrap();
+      toast.success('Profile updated successfully');
+      setEditingFields(prev => ({ ...prev, [field]: false }));
+      
+      // Update formData with the new addresses if we added a pending one
+      if (field === 'addresses' && updateData.addresses) {
+        setFormData(prev => ({
+          ...prev,
+          addresses: updateData.addresses
+        }));
+      }
+    } catch (error) {
+      toast.error('Failed to update profile');
+      console.error('Update error:', error);
     }
-  } catch (error) {
-    toast.error('Failed to update profile');
-    console.error('Update error:', error);
-  }
-};
+  };
+
 
   // Handle logout
   const handleLogout = () => {
     dispatch(logout());
     navigate('/');
   };
+
 
   // Cancel order
   const handleCancelOrder = async (orderId: string) => {
@@ -242,10 +238,12 @@ const handleSave = async (field: keyof EditableField) => {
     }
   };
 
+
   // Format date
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-IN');
   };
+
 
   // Format currency
   const formatCurrency = (amount: number) => {
@@ -255,6 +253,7 @@ const handleSave = async (field: keyof EditableField) => {
     }).format(amount);
   };
 
+
   if (!user && profileLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -262,6 +261,7 @@ const handleSave = async (field: keyof EditableField) => {
       </div>
     );
   }
+
 
   if (!user) {
     navigate('/auth');
@@ -274,8 +274,9 @@ const handleSave = async (field: keyof EditableField) => {
       toast.error('Please add at least one address before proceeding to checkout');
       return;
     }
-    navigate('/cart'); // Adjust the path as needed
+    navigate('/cart');
   };
+
 
   return (
     <>
@@ -303,6 +304,7 @@ const handleSave = async (field: keyof EditableField) => {
             </div>
           </div>
 
+
           {/* Tabs - Mobile Friendly */}
           <div className="flex gap-2 sm:gap-4 mb-4 sm:mb-6 overflow-x-auto">
             <Button
@@ -322,6 +324,7 @@ const handleSave = async (field: keyof EditableField) => {
               Orders
             </Button>
           </div>
+
 
           {activeTab === 'profile' && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
@@ -376,6 +379,7 @@ const handleSave = async (field: keyof EditableField) => {
                     </div>
                   </div>
 
+
                   {/* Last Name */}
                   <div>
                     <label className="block text-sm font-medium mb-2">Last Name</label>
@@ -420,6 +424,7 @@ const handleSave = async (field: keyof EditableField) => {
                       )}
                     </div>
                   </div>
+
 
                   {/* Email */}
                   <div>
@@ -471,6 +476,7 @@ const handleSave = async (field: keyof EditableField) => {
                     </div>
                   </div>
 
+
                   {/* Phone Number */}
                   <div>
                     <label className="block text-sm font-medium mb-2">Phone Number</label>
@@ -521,6 +527,7 @@ const handleSave = async (field: keyof EditableField) => {
                   </div>
                 </CardContent>
               </Card>
+
 
               {/* Addresses */}
               <Card>
@@ -619,6 +626,7 @@ const handleSave = async (field: keyof EditableField) => {
                         </div>
                       ))}
 
+
                       {/* Add New Address */}
                       <div className="p-3 sm:p-4 border-2 border-dashed border-gray-300 rounded-lg space-y-3">
                         <h4 className="font-medium text-sm sm:text-base">Add New Address</h4>
@@ -657,17 +665,35 @@ const handleSave = async (field: keyof EditableField) => {
                             className="text-sm"
                           />
                         </div>
-                        <Button onClick={addAddress} className="w-full text-sm">
-                          <Plus className="w-4 h-4 mr-2" />
-                          Add Address
-                        </Button>
+                        {/* Default Address Checkbox */}
+                        <label className="flex items-center text-sm">
+                          <input
+                            type="checkbox"
+                            checked={newAddress.isDefault}
+                            onChange={(e) => setNewAddress(prev => ({ ...prev, isDefault: e.target.checked }))}
+                            className="mr-2"
+                          />
+                          Set as Default Address
+                        </label>
                       </div>
+
 
                       {/* Save/Cancel buttons */}
                       <div className="flex flex-col sm:flex-row justify-end gap-2">
                         <Button
                           variant="outline"
-                          onClick={() => toggleEdit('addresses')}
+                          onClick={() => {
+                            toggleEdit('addresses');
+                            // Reset new address form on cancel
+                            setNewAddress({
+                              name: '',
+                              addressLine1: '',
+                              city: '',
+                              state: '',
+                              pinCode: '',
+                              isDefault: true
+                            });
+                          }}
                           className="order-2 sm:order-1"
                         >
                           <X className="w-4 h-4 mr-2" />
@@ -723,6 +749,7 @@ const handleSave = async (field: keyof EditableField) => {
             </div>
           )}
 
+
           {activeTab === 'orders' && (
             <div className="space-y-4 sm:space-y-6">
               {/* Order Stats */}
@@ -745,6 +772,7 @@ const handleSave = async (field: keyof EditableField) => {
                   </CardContent>
                 </Card>
 
+
                 <Card>
                   <CardContent className="p-4 sm:p-6">
                     <div className="flex items-center">
@@ -763,6 +791,7 @@ const handleSave = async (field: keyof EditableField) => {
                   </CardContent>
                 </Card>
               </div>
+
 
               {/* Orders List */}
               <Card>
@@ -800,6 +829,7 @@ const handleSave = async (field: keyof EditableField) => {
                             </div>
                           </div>
 
+
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 mb-3 text-xs sm:text-sm">
                             <div>
                               <p className="text-gray-600">Items: {order.itemCount}</p>
@@ -820,6 +850,7 @@ const handleSave = async (field: keyof EditableField) => {
                             </div>
                           </div>
 
+
                           <div className="space-y-2">
                             {order.items.map((item) => (
                               <div key={item._id} className="flex items-center justify-between text-xs sm:text-sm gap-3">
@@ -838,6 +869,7 @@ const handleSave = async (field: keyof EditableField) => {
                               </div>
                             ))}
                           </div>
+
 
                           {order.status !== 'cancelled' && order.status !== 'delivered' && (
                             <div className="mt-3 sm:mt-4 flex justify-end">
@@ -876,5 +908,6 @@ const handleSave = async (field: keyof EditableField) => {
     </>
   );
 };
+
 
 export default ProfilePage;
