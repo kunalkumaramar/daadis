@@ -171,24 +171,59 @@ const ProfilePage: React.FC = () => {
   };
 
   // Save profile changes
-  const handleSave = async (field: keyof EditableField) => {
-    try {
-      const updateData: any = {};
+const handleSave = async (field: keyof EditableField) => {
+  try {
+    const updateData: any = {};
+    
+    if (field === 'addresses') {
+      // Check if there's a pending new address with required fields filled
+      const hasPendingAddress = newAddress.name.trim() !== '' || 
+                                newAddress.addressLine1.trim() !== '' || 
+                                newAddress.city.trim() !== '';
       
-      if (field === 'addresses') {
-        updateData.addresses = formData.addresses;
+      if (hasPendingAddress) {
+        // Validate required fields
+        if (!newAddress.name || !newAddress.addressLine1 || !newAddress.city) {
+          toast.error('Please complete all required address fields (Name, Address Line, City) or clear them before saving');
+          return;
+        }
+        
+        // Add the pending address to formData before saving
+        const updatedAddresses = [...formData.addresses, newAddress];
+        updateData.addresses = updatedAddresses;
+        
+        // Clear the new address form after adding
+        setNewAddress({
+          name: '',
+          addressLine1: '',
+          city: '',
+          state: '',
+          pinCode: '',
+          isDefault: false
+        });
       } else {
-        updateData[field] = formData[field as keyof UserForm];
+        updateData.addresses = formData.addresses;
       }
-
-      await dispatch(updateProfile(updateData)).unwrap();
-      toast.success('Profile updated successfully');
-      setEditingFields(prev => ({ ...prev, [field]: false }));
-    } catch (error) {
-      toast.error('Failed to update profile');
-      console.error('Update error:', error);
+    } else {
+      updateData[field] = formData[field as keyof UserForm];
     }
-  };
+
+    await dispatch(updateProfile(updateData)).unwrap();
+    toast.success('Profile updated successfully');
+    setEditingFields(prev => ({ ...prev, [field]: false }));
+    
+    // Update formData with the new addresses if we added a pending one
+    if (field === 'addresses' && updateData.addresses) {
+      setFormData(prev => ({
+        ...prev,
+        addresses: updateData.addresses
+      }));
+    }
+  } catch (error) {
+    toast.error('Failed to update profile');
+    console.error('Update error:', error);
+  }
+};
 
   // Handle logout
   const handleLogout = () => {
