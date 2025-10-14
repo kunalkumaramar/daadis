@@ -161,28 +161,26 @@ return (
                     {/* Stock Status Display */}
                     <div className="flex items-center gap-2 mt-2">
                       {productData?.stock !== undefined ? (
-                        <div className={cn(
-                          "flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium",
-                          isOutOfStock 
-                            ? "bg-red-100 text-red-700 border border-red-200" 
-                            : productData.stock < 10 
-                              ? "bg-orange-100 text-orange-700 border border-orange-200"
-                              : "bg-green-100 text-green-700 border border-green-200"
-                        )}>
-                          {isOutOfStock ? (
-                            <>
-                              <AlertTriangle className="w-4 h-4" />
-                              <span>Out of Stock</span>
-                            </>
-                          ) : productData.stock < 10 ? (
-                            <>
-                              <AlertTriangle className="w-4 h-4" />
-                              <span>Only {productData.stock} left</span>
-                            </>
-                          ) : (
-                            <span>In Stock ({productData.stock} available)</span>
-                          )}
-                        </div>
+                        isOutOfStock || productData.stock < 10 ? (
+                          <div className={cn(
+                            "flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium",
+                            isOutOfStock 
+                              ? "bg-red-100 text-red-700 border border-red-200" 
+                              : "bg-orange-100 text-orange-700 border border-orange-200"
+                          )}>
+                            {isOutOfStock ? (
+                              <>
+                                <AlertTriangle className="w-4 h-4" />
+                                <span>Out of Stock</span>
+                              </>
+                            ) : (
+                              <>
+                                <AlertTriangle className="w-4 h-4" />
+                                <span>Only {productData.stock} left</span>
+                              </>
+                            )}
+                          </div>
+                        ) : null
                       ) : (
                         <Skeleton className="h-6 w-24" />
                       )}
