@@ -1,9 +1,8 @@
 // Home-OurProducts.tsx
-//import { ICategory, IProduct } from "../../utils/constants";
 import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
 import { Skeleton } from "@mui/material";
-import { optimizeCloudinaryUrl } from "../../utils/utility-functions";
+import { optimizeCloudinaryUrl, optimizeImage } from "../../utils/utility-functions"; // Updated import
 import TiltedCard from "./Home-OurProductsAnimation";
 
 // Import from Redux slices
@@ -22,7 +21,6 @@ import {
 import type { RootState, AppDispatch } from "../../redux1/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-
 
 const HomeOurProducts = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -65,7 +63,7 @@ const HomeOurProducts = () => {
               <div key={category._id} className="w-[100%] col-span-1 max-w-sm">
                 <Link to={`/category/${category._id}`} className="hover:cursor-pointer block">
                   <TiltedCard
-                    imageSrc={optimizeCloudinaryUrl(category.image)}
+                    imageSrc={optimizeCloudinaryUrl(category.image)} // Kept optimizeCloudinaryUrl for categories
                     altText={`${category.name} category`}
                     captionText={category.name}
                     containerHeight="320px"
@@ -92,47 +90,47 @@ const HomeOurProducts = () => {
             ))}
       </div>
 
-     {/* ---------- Best Sellers (Top Products) ---------- */}
+      {/* ---------- Best Sellers (Top Products) ---------- */}
       <div id="best-sellers-section" className="mt-16 best-sellers-section">
-  <h1 className="font-bold text-xl mb-8 text-center">Best Sellers</h1>
-  <div className="grid sm:grid-cols-3 grid-cols-1 gap-6 justify-items-center">
-    {productsLoading || topProducts.length === 0
-      ? [0, 1, 2].map((num) => (
-          <div key={num} className="w-[100%] col-span-1 max-w-xs">
-            <Skeleton className="rounded-md w-[100%] aspect-square" />
-            <Skeleton className="w-3/4 mt-2" />
-            <Skeleton className="w-1/2 mt-1" />
-          </div>
-        ))
-      : topProducts.map((product: Product) => (
-          <div
-            key={product._id}
-            className="rounded-lg flex flex-col h-full relative hover:shadow-lg transition w-full max-w-xs"
-          >
-            {/* Product Image Container - Takes up remaining space */}
-            <div className="flex-grow flex items-center justify-center p-2">
-              <Link to={`/product/${product._id}`} className="block">
-                <img
-                  className="max-w-full max-h-full object-contain rounded-md"
-                  src={optimizeCloudinaryUrl(product.images?.[0])}
-                  alt={product.name}
-                />
-              </Link>
-            </div>
-            
-            {/* Product Info - Always at bottom */}
-            <div className="px-2 text-center mt-3 flex-shrink-0">
-              <span className="font-semibold">{product.name}</span>
-              <span className="block text-slate-500 text-sm">
-                {product.weight?.number}
-                {product.weight?.unit}
-              </span>
-              <span className="block font-bold">₹ {product.price}</span>
-            </div>
-          </div>
-        ))}
-  </div>
-</div>
+        <h1 className="font-bold text-xl mb-8 text-center">Best Sellers</h1>
+        <div className="grid sm:grid-cols-3 grid-cols-1 gap-6 justify-items-center">
+          {productsLoading || topProducts.length === 0
+            ? [0, 1, 2].map((num) => (
+                <div key={num} className="w-[100%] col-span-1 max-w-xs">
+                  <Skeleton className="rounded-md w-[100%] aspect-square" />
+                  <Skeleton className="w-3/4 mt-2" />
+                  <Skeleton className="w-1/2 mt-1" />
+                </div>
+              ))
+            : topProducts.map((product: Product) => (
+                <div
+                  key={product._id}
+                  className="rounded-lg flex flex-col h-full relative hover:shadow-lg transition w-full max-w-xs"
+                >
+                  {/* Product Image Container - Takes up remaining space */}
+                  <div className="flex-grow flex items-center justify-center p-2">
+                    <Link to={`/product/${product._id}`} className="block">
+                      <img
+                        className="max-w-full max-h-full object-contain rounded-md"
+                        src={optimizeImage(product.images?.[0])} // Use optimizeImage for products
+                        alt={product.name}
+                      />
+                    </Link>
+                  </div>
+                  
+                  {/* Product Info - Always at bottom */}
+                  <div className="px-2 text-center mt-3 flex-shrink-0">
+                    <span className="font-semibold">{product.name}</span>
+                    <span className="block text-slate-500 text-sm">
+                      {product.weight?.number}
+                      {product.weight?.unit}
+                    </span>
+                    <span className="block font-bold">₹ {product.price}</span>
+                  </div>
+                </div>
+              ))}
+        </div>
+      </div>
     </div>
   );
 };
