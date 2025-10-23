@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -7,6 +7,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 export const Footer = () => {
   const titleRef = useRef<HTMLHeadingElement>(null);
+  const location = useLocation(); // Track route changes
 
   // Function to scroll to top smoothly
   const scrollToTop = () => {
@@ -26,9 +27,11 @@ export const Footer = () => {
 
       const chars = titleRef.current.querySelectorAll('.char');
 
-      // Animate characters one by one when entering viewport
+      // Reset previous animation state
+      gsap.killTweensOf(chars); // Kill any existing animations
       gsap.set(chars, { opacity: 0, y: 100 });
-      
+
+      // Animate characters one by one when entering viewport
       gsap.to(chars, {
         opacity: 1,
         y: 0,
@@ -43,12 +46,17 @@ export const Footer = () => {
         }
       });
     }
-  }, []);
+
+    // Cleanup ScrollTrigger on component unmount
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    };
+  }, [location.pathname]); // Re-run effect on route change
 
   return (
     <div className="bg-[#fef9c3] flex flex-col relative overflow-hidden min-h-[80vh] md:min-h-[100vh]">
       {/* Top Section - Brand Text with GSAP Animation */}
-      <div className="flex  justify-center md:justify-start py-4 md:py-12 lg:py-16">
+      <div className="flex justify-center md:justify-start py-4 md:py-12 lg:py-16">
         <h1 
           ref={titleRef}
           className="text-7xl sm:text-8xl md:text-9xl lg:text-[10rem] xl:text-[12rem] 2xl:text-[14rem] font-bold text-white text-center leading-none px-4 whitespace-nowrap "
@@ -61,7 +69,6 @@ export const Footer = () => {
 
         {/* Mobile/Tablet Layout - Stacked */}
         <div className="flex flex-col lg:hidden ">
-
           {/* Tagline and Image Section - Mobile/Tablet Side by Side */}
           <div className="flex items-center justify-between px-6 py-8">
             {/* Tagline Section - Left side */}
@@ -93,7 +100,7 @@ export const Footer = () => {
                   <li><Link to="/" onClick={scrollToTop} className="text-gray-950 hover:-translate-y-1 transition-all duration-200 inline-block font-bold" style={{fontFamily: 'Poppins, sans-serif'}}>Home</Link></li>
                   <li><Link to="/about-us" onClick={scrollToTop} className="text-gray-950 hover:-translate-y-1 transition-all duration-200 inline-block font-bold" style={{fontFamily: 'Poppins, sans-serif'}}>About</Link></li>
                   <li><Link to="/category/all" onClick={scrollToTop} className="text-gray-950 hover:-translate-y-1 transition-all duration-200 inline-block font-bold" style={{fontFamily: 'Poppins, sans-serif'}}>Products</Link></li>
-                  <li><Link to="./contact" onClick={scrollToTop} className="text-gray-950 hover:-translate-y-1 transition-all duration-200 inline-block font-bold" style={{fontFamily: 'Poppins, sans-serif'}}>Contact</Link></li>
+                  <li><Link to="/contact" onClick={scrollToTop} className="text-gray-950 hover:-translate-y-1 transition-all duration-200 inline-block font-bold" style={{fontFamily: 'Poppins, sans-serif'}}>Contact</Link></li>
                   <li><Link to="/faq" onClick={scrollToTop} className="text-gray-950 hover:-translate-y-1 transition-all duration-200 inline-block font-bold" style={{fontFamily: 'Poppins, sans-serif'}}>FAQ</Link></li>
                 </ul>
               </div>
@@ -143,14 +150,12 @@ export const Footer = () => {
           {/* Right Column - Navigation Links */}
           <div className="flex-1 p-12">
             <div className="grid grid-cols-3 gap-6 xl:gap-8 h-full">
-              
-
               {/* Social Column */}
               <div>
                 <h3 className="font-bold text-gray-800 mb-6 text-lg">Social</h3>
                 <ul className="space-y-3">
                   <li><a href="https://www.instagram.com/daadis.in?igsh=MTg2aWx1M2o1d2c2bQ==" className="text-gray-950 hover:-translate-y-1 transition-all duration-200 inline-block font-bold" style={{fontFamily: 'Poppins, sans-serif'}}>Instagram</a></li>
-                 </ul>
+                </ul>
               </div>
 
               {/* Info Column */}
@@ -169,13 +174,11 @@ export const Footer = () => {
                 <ul className="space-y-3">
                   <li><Link to="/" onClick={scrollToTop} className="text-gray-950 hover:-translate-y-1 transition-all duration-200 inline-block font-bold" style={{fontFamily: 'Poppins, sans-serif'}}>Home</Link></li>
                   <li><Link to="/about-us" onClick={scrollToTop} className="text-gray-950 hover:-translate-y-1 transition-all duration-200 inline-block font-bold" style={{fontFamily: 'Poppins, sans-serif'}}>About</Link></li>
-                  <li><Link to="/category/all" onClick={scrollToTop} className="text-gray-950 hover:-translate-y-1 transition-all duration-200 inline-block font-bold" style={{fontFamily: 'Poppins, sans-serif'}}>products</Link></li>
+                  <li><Link to="/category/all" onClick={scrollToTop} className="text-gray-950 hover:-translate-y-1 transition-all duration-200 inline-block font-bold" style={{fontFamily: 'Poppins, sans-serif'}}>Products</Link></li>
                   <li><Link to="/contact" onClick={scrollToTop} className="text-gray-950 hover:-translate-y-1 transition-all duration-200 inline-block font-bold" style={{fontFamily: 'Poppins, sans-serif'}}>Contact</Link></li>
                   <li><Link to="/faq" onClick={scrollToTop} className="text-gray-950 hover:-translate-y-1 transition-all duration-200 inline-block font-bold" style={{fontFamily: 'Poppins, sans-serif'}}>FAQ</Link></li>
                 </ul>
               </div>
-
-              
             </div>
           </div>
         </div>
