@@ -1,11 +1,10 @@
-// import { useDispatch, useSelector } from "react-redux";
+// utility-functions.ts
 import { ICartItem, IProduct } from "./constants";
 import { setCustomerData } from "../redux/slices/websiteSlice";
 import { Dispatch, UnknownAction } from "@reduxjs/toolkit";
 
 export const sendEmail = async (email: { from: string, to: string[], subject: string, html: string }) => {
     try {
-        // @ts-ignore
         const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}${import.meta.env.VITE_PORT}${import.meta.env.VITE_API_URL}email/send-email`, {
             method: "POST",
             headers: {
@@ -25,9 +24,6 @@ export const sendEmail = async (email: { from: string, to: string[], subject: st
 };
 
 export const updateWishList = async ( product: IProduct, isAdd: boolean, currentWishlist: IProduct[], dispatch: Dispatch<UnknownAction>, isUserPresent: boolean, cart?: ICartItem[] ) => {
-    
-    // const dispatch = useDispatch();
-    // const currentWishlist = useSelector((state:any) => state?.website?.customerData?.wishList);
     let newWishList = [ ...currentWishlist, product ];
     
     if ( !isAdd ) {
@@ -42,7 +38,6 @@ export const updateWishList = async ( product: IProduct, isAdd: boolean, current
     }
 
     try {
-        // @ts-ignore
         const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}${import.meta.env.VITE_PORT}${import.meta.env.VITE_API_URL}users/update-user-wishlist`, {
             method: "PATCH",
             headers: {
@@ -56,19 +51,15 @@ export const updateWishList = async ( product: IProduct, isAdd: boolean, current
         if (!response.ok) throw new Error("HTTP error! status: "+response.status+", "+response.statusText);
         
         const data = await response.json();
-
-        // if (data.data.role !== "Customer") throw new Error(`Error: ${401}, Unauthorised user`);
         dispatch(setCustomerData(data.data));
         return true;
     } catch (error) {
         console.error("Error: ", error);
-        // console.log(userData);
         return false;
     }
 };
 
 export const updateCart = async ( cartItem: ICartItem, isAdd: boolean, sameItem: boolean,  currentCart: ICartItem[], dispatch: Dispatch<UnknownAction>, isUserPresent: boolean, wishList?: IProduct[] ) => {
-
     let newCart;
 
     if ( isAdd )
@@ -90,7 +81,6 @@ export const updateCart = async ( cartItem: ICartItem, isAdd: boolean, sameItem:
     }
 
     try {
-        // @ts-ignore
         const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}${import.meta.env.VITE_PORT}${import.meta.env.VITE_API_URL}users/update-user-cart`, {
             method: "PATCH",
             headers: {
@@ -104,19 +94,15 @@ export const updateCart = async ( cartItem: ICartItem, isAdd: boolean, sameItem:
         if (!response.ok) throw new Error("HTTP error! status: "+response.status+", "+response.statusText);
         
         const data = await response.json();
-
-        // if (data.data.role !== "Customer") throw new Error(`Error: ${401}, Unauthorised user`);
         dispatch(setCustomerData(data.data));
         return true;
     } catch (error) {
         console.error("Error: ", error);
-        // console.log(userData);
         return false;
     }
 };
 
 export const clearCart = async ( dispatch: Dispatch<UnknownAction>, isUserPresent: boolean) => {
-
     let newCart;
 
     if ( !isUserPresent ) {
@@ -126,10 +112,7 @@ export const clearCart = async ( dispatch: Dispatch<UnknownAction>, isUserPresen
         return true;
     }
 
-    // console.log(updateCart);
-
     try {
-        // @ts-ignore
         const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}${import.meta.env.VITE_PORT}${import.meta.env.VITE_API_URL}users/update-user-cart`, {
             method: "PATCH",
             headers: {
@@ -143,33 +126,31 @@ export const clearCart = async ( dispatch: Dispatch<UnknownAction>, isUserPresen
         if (!response.ok) throw new Error("HTTP error! status: "+response.status+", "+response.statusText);
         
         const data = await response.json();
-
-        // if (data.data.role !== "Customer") throw new Error(`Error: ${401}, Unauthorised user`);
         dispatch(setCustomerData(data.data));
         return true;
     } catch (error) {
         console.error("Error: ", error);
-        // console.log(userData);
         return false;
     }
 };
 
-export function optimizeCloudinaryUrl(
-  url: string,
-) {
-
+export const optimizeCloudinaryUrl = (url: string) => {
   if (!url?.includes("res.cloudinary.com")) return url;
 
   const [prefix, suffix] = url.split("/upload/");
   const transformations = [
     "f_auto",
     "q_auto",
-    // width ? `w_${width}` : null,
-    // height ? `h_${height}` : null,
-    // "c_fill"
   ]
     .filter(Boolean)
     .join(",");
 
   return `${prefix}/upload/${transformations}/${suffix}`;
-}
+};
+
+export const optimizeImage = (url: string, width = 800) => {
+  return url.replace(
+    '/upload/',
+    `/upload/f_auto,q_auto:good,w_${width},c_limit/`
+  );
+};
