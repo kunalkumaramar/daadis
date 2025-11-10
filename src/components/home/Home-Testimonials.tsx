@@ -38,7 +38,7 @@ const testimonials: TestimonialItem[] = [
       "This product has revolutionized our workflow. The seamless integration and intuitive design have boosted our team's productivity by 40%. Absolutely game-changing!",
     avatar: "",
     videoUrl:
-      "https://res.cloudinary.com/dwqyjytaw/video/upload/v1756799325/Daadi_s_v3_aptdxm.mp4",
+      "https://res.cloudinary.com/dh7d6iho8/video/upload/v1762781410/Daadi_s_v3_ibxg8u.mp4",
   },
   {
     id: 2,
@@ -48,7 +48,7 @@ const testimonials: TestimonialItem[] = [
     content:
       "Daadis sweets remind me of authentic homemade mithai. The gulab jamuns were perfectly soft and not overly sweet. Truly feels like festive vibes in every bite!",
     avatar:
-      "https://res.cloudinary.com/dmrgscauc/image/upload/v1758786177/kv_p7tz3a.jpg",
+      "https://res.cloudinary.com/dh7d6iho8/image/upload/v1762781982/kv_pfe7ma.webp",
   },
   {
     id: 3,
@@ -59,7 +59,7 @@ const testimonials: TestimonialItem[] = [
       "From concept to execution, this solution exceeded all expectations. The creative possibilities it unlocks are endless, and our clients love the results.",
     avatar: "",
     videoUrl:
-      "https://res.cloudinary.com/dwqyjytaw/video/upload/v1756799324/Daadi_s_v1_t5a3p7.mp4",
+      "https://res.cloudinary.com/dh7d6iho8/video/upload/v1762781405/Daadi_s_v1_ojr5ns.mp4",
   },
   {
     id: 4,
@@ -69,7 +69,7 @@ const testimonials: TestimonialItem[] = [
     content:
       "The khakhras are super crispy and fresh! I tried the masala flavor, and it’s the perfect evening snack with tea. Light, crunchy, and guilt-free.",
     avatar:
-      "https://res.cloudinary.com/dmrgscauc/image/upload/v1758786178/neer_bsbaae.png",
+      "https://res.cloudinary.com/dh7d6iho8/image/upload/v1762781984/neer_vakwek.webp",
   },
   {
     id: 5,
@@ -80,7 +80,7 @@ const testimonials: TestimonialItem[] = [
       "The automation features have streamlined our operations completely. What used to take hours now happens in minutes with incredible accuracy.",
     avatar: "",
     videoUrl:
-      "https://res.cloudinary.com/dwqyjytaw/video/upload/v1756799323/Daadi_s_v4_vvur9d.mp4",
+      "https://res.cloudinary.com/dh7d6iho8/video/upload/v1762781397/Daadi_s_v4_izgcsf.mp4",
   },
   {
     id: 6,
@@ -91,7 +91,7 @@ const testimonials: TestimonialItem[] = [
       "This product has revolutionized our workflow. The seamless integration and intuitive design have boosted our team's productivity by 40%. Absolutely game-changing!",
     avatar: "",
     videoUrl:
-      "https://res.cloudinary.com/dwqyjytaw/video/upload/v1756799323/Daadi_s_v2_qqbj3l.mp4",
+      "https://res.cloudinary.com/dh7d6iho8/video/upload/v1762781412/Daadi_s_v2_mnqmrh.mp4",
   },
   {
     id: 7,
@@ -101,7 +101,7 @@ const testimonials: TestimonialItem[] = [
     content:
       "I loved the namkeens! They are not oily and taste just like my grandmother recipes. The packaging could be better, but the taste makes up for it.",
     avatar:
-      "https://res.cloudinary.com/dmrgscauc/image/upload/v1758786177/kunal_c4z6oo.jpg",
+      "https://res.cloudinary.com/dh7d6iho8/image/upload/v1762781981/kunal_vv24k0.webp",
   },
   {
     id: 8,
@@ -111,7 +111,7 @@ const testimonials: TestimonialItem[] = [
     content:
       "Daadi’s products are pure nostalgia. The ladoos tasted exactly like homemade ones, full of ghee and love. Definitely ordering again for Diwali.",
     avatar:
-      "https://res.cloudinary.com/dmrgscauc/image/upload/v1758786177/mohit_aqqupg.jpg",
+      "https://res.cloudinary.com/dh7d6iho8/image/upload/v1762781983/mohit_ou8dzd.webp",
   },
   {
     id: 9,
@@ -121,7 +121,7 @@ const testimonials: TestimonialItem[] = [
     content:
       "The khakhras are wholesome and filling. I carry them to work, and they make a great healthy munch. A little more flavor variety would make it perfect.",
     avatar:
-      "https://res.cloudinary.com/dmrgscauc/image/upload/v1758786178/Rohan_kvuele.png",
+      "https://res.cloudinary.com/dh7d6iho8/image/upload/v1762781985/Rohan_rmeois.webp",
   },
   {
     id: 10,
@@ -131,7 +131,7 @@ const testimonials: TestimonialItem[] = [
     content:
       "The taste is really authentic and homemade, not like commercial brands. The kaju katli was melt-in-mouth good. Slightly pricey, but worth it.",
     avatar:
-      "https://res.cloudinary.com/dmrgscauc/image/upload/v1758786184/nazid_zhunc6.png",
+      "https://res.cloudinary.com/dh7d6iho8/image/upload/v1762781984/nazid_s2h9h0.webp",
   },
 ];
 

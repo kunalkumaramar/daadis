@@ -17,25 +17,25 @@ export interface ISampleBanners {
 const SAMPLE_BANNERS: ISampleBanners[] = [
   {
     _id: "1",
-    imageUrl: { url: "https://res.cloudinary.com/dthrjonaq/image/upload/f_auto,q_auto/v1732120782/daadis.in/banners/pcrmlsgzx0iofyallsq5.png", publicId: "banner1" },
+    imageUrl: { url: "https://res.cloudinary.com/dh7d6iho8/image/upload/v1762778654/1_loff6u.webp", publicId: "banner1" },
     bannerName: "Namak Para",
     bannerText: "Namak Para",
     bannerType: "hero",
     bannerColours: ["A2D2DF", "FF8383"],
-    bannerElementUrl: { url: "https://res.cloudinary.com/dthrjonaq/image/upload/v1732120785/daadis.in/banners/va4i1k0pcont8swuhx3n.png", publicId: "element1" },
+    bannerElementUrl: { url: "https://res.cloudinary.com/dh7d6iho8/image/upload/v1762778654/2_1_h5yxtr.webp", publicId: "element1" },
   },
   {
     _id: "2",
-    imageUrl: { url: "https://res.cloudinary.com/dthrjonaq/image/upload/f_auto,q_auto/v1732148699/daadis.in/banners/k64nrjzghz69yivjx55w.png", publicId: "banner2" },
+    imageUrl: { url: "https://res.cloudinary.com/dh7d6iho8/image/upload/v1762778655/3_hsndbo.webp", publicId: "banner2" },
     bannerName: "Shakkar Para",
     bannerText: "Shakkar Para",
     bannerType: "hero",
     bannerColours: ["7BD3EA", "9694FF"],
-    bannerElementUrl: { url: "https://res.cloudinary.com/dthrjonaq/image/upload/v1732148695/daadis.in/banners/fv1ghddvzsqekenxgsz1.png", publicId: "element2" },
+    bannerElementUrl: { url: "https://res.cloudinary.com/dh7d6iho8/image/upload/v1762778656/4_crqsnh.webp", publicId: "element2" },
   },
   {
     _id: "3",
-    imageUrl: { url: "https://res.cloudinary.com/dmrgscauc/image/upload/v1758798726/daadi_kaju_katli_ce6tz7.png", publicId: "banner3" },
+    imageUrl: { url: "https://res.cloudinary.com/dh7d6iho8/image/upload/v1762778659/daadi_kaju_katli_s5chbp.webp", publicId: "banner3" },
     bannerName: "Kaju Katli",
     bannerText: "Kaju Katli",
     bannerType: "hero",
@@ -44,12 +44,12 @@ const SAMPLE_BANNERS: ISampleBanners[] = [
   },
   {
     _id: "4",
-    imageUrl: { url: "https://res.cloudinary.com/dthrjonaq/image/upload/f_auto,q_auto/v1732150180/daadis.in/banners/pxbgww7xjkssexp3hiek.png", publicId: "banner4" },
+    imageUrl: { url: "https://res.cloudinary.com/dh7d6iho8/image/upload/v1762778658/5_pdhlas.webp", publicId: "banner4" },
     bannerName: "Peri Peri Khakhra",
     bannerText: "Peri Peri Khakhra",
     bannerType: "hero",
     bannerColours: ["F3B95F", "3B1E54"],
-    bannerElementUrl: { url: "https://res.cloudinary.com/dthrjonaq/image/upload/v1732150184/daadis.in/banners/sjiex8bbytg7uqvnnizi.png", publicId: "element4" },
+    bannerElementUrl: { url: "https://res.cloudinary.com/dh7d6iho8/image/upload/v1762778658/6_hhkebx.webp", publicId: "element4" },
   },
 ];
 

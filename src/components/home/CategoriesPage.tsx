@@ -378,7 +378,7 @@ export const CategoriesPage = () => {
     return category?.name ?? "Category";
   };
 
-  const ALL_PRODUCTS_IMAGE_URL = "https://res.cloudinary.com/dmrgscauc/image/upload/v1758780847/Untitled_design_7_dzo4vj.png";
+  const ALL_PRODUCTS_IMAGE_URL = "https://res.cloudinary.com/dh7d6iho8/image/upload/v1762778210/Untitled_design_7_t4twix.webp";
 
   return (
     <div className="mt-[56px] font-[quicksand] flex w-full min-h-[calc(100vh-56px)]">
