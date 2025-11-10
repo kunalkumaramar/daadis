@@ -29,6 +29,7 @@ import { PaymentSuccess } from "./components/home/PaymentSuccess";
 import  GoogleCallback  from "./components/home/GoogleCallback";
 import { AuthComponent } from "./components/home/AuthComponent";
 import ProfilePage  from "./components/home/ProfilePage";
+import { Manufacturer } from "./components/home/Manufacturer";
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path="/">
@@ -52,6 +53,7 @@ const router = createBrowserRouter(
                 <Route path="about-us" element={<AboutUs />} />
                 <Route path="blog" element={<BlogPage />} />
                 <Route path="blog/:blogId" element={<Expandedblog />} />
+                <Route path="manufacture" element={<Manufacturer />} />
             </Route>
         </Route>
     )
