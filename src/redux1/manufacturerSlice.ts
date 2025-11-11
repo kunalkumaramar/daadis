@@ -34,6 +34,7 @@ export const getManufacturerByCode = createAsyncThunk(
 
 // Define types - ADD EXPORT HERE
 export interface ManufacturerResponse {
+  name: string;
   address: string;
 }
 

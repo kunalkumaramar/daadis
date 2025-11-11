@@ -4,12 +4,14 @@ import { getManufacturerByCode, clearManufacturer } from '../../redux1/manufactu
 import { RootState, AppDispatch } from '../../redux1/store';
 import { Search } from 'lucide-react';
 
+
 export const Manufacturer = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { manufacturer, loading, error } = useSelector(
     (state: RootState) => state.manufacturer
   );
   const [code, setCode] = useState('');
+
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,10 +20,12 @@ export const Manufacturer = () => {
     }
   };
 
+
   const handleClear = () => {
     setCode('');
     dispatch(clearManufacturer());
   };
+
 
   return (
     <div className="min-h-screen flex flex-col bg-[#ffffff] font-quicksand text-black">
@@ -37,6 +41,7 @@ export const Manufacturer = () => {
               Enter the manufacturer code to view details
             </p>
           </div>
+
 
           {/* Search Form */}
           <form onSubmit={handleSearch} className="mb-8">
@@ -58,12 +63,14 @@ export const Manufacturer = () => {
             </div>
           </form>
 
+
           {/* Loading State */}
           {loading && (
             <div className="flex justify-center items-center py-12 animate-pulse">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black bg-white p-4 shadow-lg"></div>
             </div>
           )}
+
 
           {/* Error State */}
           {error && !loading && (
@@ -78,6 +85,7 @@ export const Manufacturer = () => {
               </button>
             </div>
           )}
+
 
           {/* Result Card */}
           {manufacturer && !loading && (
@@ -94,6 +102,35 @@ export const Manufacturer = () => {
                 </button>
               </div>
               
+              {/* Name Field - Added */}
+              <div className="bg-[#e0f2fe] rounded-lg p-6 border border-black mb-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 mt-1 animate-pulse">
+                    <svg
+                      className="w-5 h-5 text-black"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      />
+                    </svg>
+                  </div>
+                  <div className="flex-grow">
+                    <h3 className="text-sm font-bold text-black mb-2">
+                      Name
+                    </h3>
+                    <p className="text-black leading-relaxed">
+                      {manufacturer.name}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               <div className="bg-[#fef9c3] rounded-lg p-6 border border-black">
                 <div className="flex items-start gap-3">
                   <div className="flex-shrink-0 mt-1 animate-pulse">
@@ -128,6 +165,7 @@ export const Manufacturer = () => {
                 </div>
               </div>
 
+
               <div className="mt-6 pt-6 border-t border-black">
                 <div className="flex items-center gap-2 text-sm text-black">
                   <span className="font-bold">Code:</span>
@@ -138,6 +176,7 @@ export const Manufacturer = () => {
               </div>
             </div>
           )}
+
 
           {/* Empty State */}
           {!manufacturer && !loading && !error && (
@@ -160,6 +199,7 @@ export const Manufacturer = () => {
           )}
         </div>
       </div>
+
 
       <style>{`
         @keyframes slideDown {
