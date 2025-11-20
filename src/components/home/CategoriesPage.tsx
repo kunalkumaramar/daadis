@@ -116,7 +116,6 @@ const ProductCard = ({
   const [isCartLoading, setCartLoading] = useState(false);
   const [isWishLoading, setWishLoading] = useState(false);
   const [quantity, setQuantity] = useState(1);
-  const [showQuantity, setShowQuantity] = useState(false);
   
   const [isInWishlist, setIsInWishlist] = useState(
     currentWishList.some((item) => item._id === product._id)
@@ -135,7 +134,6 @@ const ProductCard = ({
   // Reset quantity when product changes or is out of stock
   useEffect(() => {
     setQuantity(1);
-    setShowQuantity(false);
   }, [product._id, isOutOfStock, isInCart]);
 
   const handleQuantityIncrease = (e: React.MouseEvent) => {
@@ -173,12 +171,6 @@ const ProductCard = ({
       return;
     }
 
-    // If not in cart and quantity not shown, show quantity selector
-    if (!isInCart && !showQuantity) {
-      setShowQuantity(true);
-      return;
-    }
-
     setCartLoading(true);
     try {
       if (isInCart) {
@@ -191,13 +183,11 @@ const ProductCard = ({
         if (cartEntry) {
           await dispatch(removeCartItem(cartEntry._id)).unwrap();
           setIsInCart(false);
-          setShowQuantity(false);
           toast.success("Removed from cart", { icon: <Trash2 /> });
         }
       } else {
         await dispatch(addToCart({ product: product._id, quantity })).unwrap();
         setIsInCart(true);
-        setShowQuantity(false);
         setQuantity(1);
         toast.success(`${quantity} ${quantity > 1 ? 'items' : 'item'} added to cart`, { icon: <ShoppingCart /> });
       }
@@ -248,13 +238,6 @@ const ProductCard = ({
     }
   };
 
-  const handleCancelQuantity = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setShowQuantity(false);
-    setQuantity(1);
-  };
-
   return (
     <div className={cn(
       "w-full h-full flex flex-col rounded-lg shadow-xl",
@@ -301,39 +284,29 @@ const ProductCard = ({
           </div>
         )}
 
-        {/* Quantity Selector - Show when user clicks "Add to cart" */}
-        {showQuantity && !isInCart && !isOutOfStock && (
-          <div className="flex items-center justify-between gap-2 p-2 bg-gray-50 rounded-md border border-gray-200">
-            <div className="flex items-center gap-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleQuantityDecrease}
-                disabled={quantity <= 1}
-                className="h-6 w-6 p-0 hover:bg-gray-200"
-              >
-                <Minus className="w-3 h-3" />
-              </Button>
-              <span className="px-2 text-sm font-medium min-w-[2ch] text-center">
-                {quantity}
-              </span>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleQuantityIncrease}
-                disabled={product.stock ? quantity >= product.stock : true}
-                className="h-6 w-6 p-0 hover:bg-gray-200"
-              >
-                <Plus className="w-3 h-3" />
-              </Button>
-            </div>
+        {/* Quantity Selector - Always visible when not in cart and not out of stock */}
+        {!isInCart && !isOutOfStock && (
+          <div className="flex items-center justify-center gap-2 py-1">
             <Button
               variant="ghost"
               size="sm"
-              onClick={handleCancelQuantity}
-              className="h-6 px-2 text-xs hover:bg-gray-200"
+              onClick={handleQuantityDecrease}
+              disabled={quantity <= 1}
+              className="h-7 w-7 p-0 hover:bg-gray-200"
             >
-              Cancel
+              <Minus className="w-3 h-3" />
+            </Button>
+            <span className="px-2 text-sm font-medium min-w-[2ch] text-center">
+              {quantity}
+            </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleQuantityIncrease}
+              disabled={product.stock ? quantity >= product.stock : true}
+              className="h-7 w-7 p-0 hover:bg-gray-200"
+            >
+              <Plus className="w-3 h-3" />
             </Button>
           </div>
         )}
@@ -355,8 +328,6 @@ const ProductCard = ({
               "Out of Stock"
             ) : isInCart ? (
               <span className="truncate">- Remove from cart</span>
-            ) : showQuantity ? (
-              <span className="truncate">Confirm Add ({quantity})</span>
             ) : (
               <span className="truncate">+ Add to cart</span>
             )}

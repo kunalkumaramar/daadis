@@ -207,9 +207,9 @@ export const ProductPage = () => {
           )}
         </div>
 
-        {/* Quantity Selector - Only show when not in cart and not out of stock */}
+        {/* Quantity Selector - Always visible when not in cart and not out of stock */}
         {!isInCart && !isOutOfStock && productData?._id && (
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             <span className="text-sm font-medium text-gray-600">Quantity:</span>
             <div className="flex items-center border border-gray-300 rounded-lg">
               <Button
