@@ -21,7 +21,8 @@ import {
 
 import { 
   addToCart, 
-  removeCartItem 
+  removeCartItem, 
+  updateCartItem
 } from "../../redux1/cartSlice";
 
 import { 
@@ -115,15 +116,7 @@ const ProductCard = ({
   const navigate = useNavigate();
   const [isCartLoading, setCartLoading] = useState(false);
   const [isWishLoading, setWishLoading] = useState(false);
-  const [quantity, setQuantity] = useState(1);
   
-  const [isInWishlist, setIsInWishlist] = useState(
-    currentWishList.some((item) => item._id === product._id)
-  );
-  const [isInCart, setIsInCart] = useState(
-    currentCart.some((item) => item.product._id === product._id)
-  );
-
   // Get user authentication status
   const user = useSelector((state: RootState) => state.auth.user);
   const isAuthenticated = !!user;
@@ -131,16 +124,35 @@ const ProductCard = ({
   // Check if product is out of stock
   const isOutOfStock = product.stock === 0;
 
-  // Reset quantity when product changes or is out of stock
+  // Check if product is in cart and get its cart entry
+  const cartEntry = currentCart.find(item =>
+    typeof item.product === 'object'
+      ? item.product._id === product._id
+      : item.product === product._id
+  );
+  const isInCart = !!cartEntry;
+  
+  // Initialize quantity from cart if exists, otherwise default to 1
+  const [quantity, setQuantity] = useState(isInCart ? cartEntry.quantity : 1);
+  
+  const [isInWishlist, setIsInWishlist] = useState(
+    currentWishList.some((item) => item._id === product._id)
+  );
+
+  // Update quantity when cart changes
   useEffect(() => {
-    setQuantity(1);
-  }, [product._id, isOutOfStock, isInCart]);
+    if (isInCart && cartEntry) {
+      setQuantity(cartEntry.quantity);
+    } else {
+      setQuantity(1);
+    }
+  }, [isInCart, cartEntry]);
 
   const handleQuantityIncrease = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (product.stock && quantity < product.stock) {
-      setQuantity(prev => prev + 1);
+      setQuantity((prev: number) => prev + 1);
     } else {
       toast.error(`Only ${product.stock} items available`);
     }
@@ -150,11 +162,11 @@ const ProductCard = ({
     e.preventDefault();
     e.stopPropagation();
     if (quantity > 1) {
-      setQuantity(prev => prev - 1);
+      setQuantity((prev: number) => prev - 1);
     }
   };
 
-  const handleCartToggle = async (e: React.MouseEvent) => {
+  const handleCartAction = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
@@ -174,25 +186,41 @@ const ProductCard = ({
     setCartLoading(true);
     try {
       if (isInCart) {
-        // Find the cart item entry
-        const cartEntry = currentCart.find(item =>
-          typeof item.product === 'object'
-            ? item.product._id === product._id
-            : item.product === product._id
-        );
-        if (cartEntry) {
-          await dispatch(removeCartItem(cartEntry._id)).unwrap();
-          setIsInCart(false);
-          toast.success("Removed from cart", { icon: <Trash2 /> });
-        }
+        // Update quantity if product is already in cart
+        await dispatch(updateCartItem({ 
+          itemId: cartEntry._id, 
+          data: { quantity } 
+        })).unwrap();
+        toast.success("Cart updated successfully", { icon: <ShoppingCart /> });
       } else {
+        // Add new item to cart
         await dispatch(addToCart({ product: product._id, quantity })).unwrap();
-        setIsInCart(true);
-        setQuantity(1);
         toast.success(`${quantity} ${quantity > 1 ? 'items' : 'item'} added to cart`, { icon: <ShoppingCart /> });
       }
-    } catch {
+    } catch (error) {
       toast.error("Failed to update cart");
+      // Reset quantity to cart value on error
+      if (isInCart && cartEntry) {
+        setQuantity(cartEntry.quantity);
+      }
+    } finally {
+      setCartLoading(false);
+    }
+  };
+
+  const handleRemoveFromCart = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!cartEntry) return;
+    
+    setCartLoading(true);
+    try {
+      await dispatch(removeCartItem(cartEntry._id)).unwrap();
+      setQuantity(1); // Reset to default
+      toast.success("Removed from cart", { icon: <Trash2 /> });
+    } catch {
+      toast.error("Failed to remove from cart");
     } finally {
       setCartLoading(false);
     }
@@ -284,14 +312,14 @@ const ProductCard = ({
           </div>
         )}
 
-        {/* Quantity Selector - Always visible when not in cart and not out of stock */}
-        {!isInCart && !isOutOfStock && (
+        {/* Quantity Selector - Always visible when not out of stock */}
+        {!isOutOfStock && (
           <div className="flex items-center justify-center gap-2 py-1">
             <Button
               variant="ghost"
               size="sm"
               onClick={handleQuantityDecrease}
-              disabled={quantity <= 1}
+              disabled={quantity <= 1 || isCartLoading}
               className="h-7 w-7 p-0 hover:bg-gray-200"
             >
               <Minus className="w-3 h-3" />
@@ -303,7 +331,7 @@ const ProductCard = ({
               variant="ghost"
               size="sm"
               onClick={handleQuantityIncrease}
-              disabled={product.stock ? quantity >= product.stock : true}
+              disabled={product.stock ? quantity >= product.stock : true || isCartLoading}
               className="h-7 w-7 p-0 hover:bg-gray-200"
             >
               <Plus className="w-3 h-3" />
@@ -311,15 +339,16 @@ const ProductCard = ({
           </div>
         )}
 
-        {/* Button with consistent positioning */}
-        <div className="mt-auto">
+        {/* Action Buttons with consistent positioning */}
+        <div className="mt-auto flex flex-col gap-2">
+          {/* Add/Update Cart Button */}
           <Button
             className={cn(
-              "flex justify-center items-center gap-2 sm:gap-4 w-full text-xs sm:text-sm",
+              "flex justify-center items-center gap-2 w-full text-xs sm:text-sm",
               isOutOfStock && "opacity-50 cursor-not-allowed"
             )}
-            variant={isOutOfStock ? "secondary" : "ghost"}
-            onClick={handleCartToggle}
+            variant={isOutOfStock ? "secondary" : "default"}
+            onClick={handleCartAction}
             disabled={isCartLoading || isOutOfStock}
           >
             {isCartLoading ? (
@@ -327,12 +356,31 @@ const ProductCard = ({
             ) : isOutOfStock ? (
               "Out of Stock"
             ) : isInCart ? (
-              <span className="truncate">- Remove from cart</span>
+              <span className="truncate">Update Cart</span>
             ) : (
-              <span className="truncate">+ Add to cart</span>
+              <span className="truncate">Add to Cart</span>
             )}
             <ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
           </Button>
+
+          {/* Remove from Cart Button - Only show when in cart */}
+          {isInCart && !isOutOfStock && (
+            <Button
+              className="flex justify-center items-center gap-2 w-full text-xs sm:text-sm"
+              variant="ghost"
+              onClick={handleRemoveFromCart}
+              disabled={isCartLoading}
+            >
+              {isCartLoading ? (
+                <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" />
+              ) : (
+                <>
+                  <span className="truncate">Remove from Cart</span>
+                  <Trash2 className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                </>
+              )}
+            </Button>
+          )}
         </div>
       </div>
       
