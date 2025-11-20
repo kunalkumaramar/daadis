@@ -12,7 +12,7 @@ import { Skeleton } from "../ui/skeleton";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../redux1/store";
 import { getProductById, selectCurrentProduct, selectProductLoading } from "../../redux1/productSlice";
-import { addToCart, removeCartItem } from "../../redux1/cartSlice";
+import { addToCart, removeCartItem, updateCartItem } from "../../redux1/cartSlice";
 import { addToWishlist, removeFromWishlist } from "../../redux1/wishlistSlice";
 
 export const ProductPage = () => {
@@ -34,12 +34,20 @@ export const ProductPage = () => {
   const [cartLoading, setCartLoading] = useState(false);
   const [wishLoading, setWishLoading] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [isUpdatingQty, setIsUpdatingQty] = useState(false);
 
   const [api] = useState<CarouselApi | undefined>(undefined);
   const [, setCurrent] = useState(0);
   const [, setCount] = useState(0);
 
   const isOutOfStock = productData?.stock === 0 || productData?.stock === undefined || productData?.stock < 1;
+
+  // Get current cart item for this product
+  const currentCartItem = cartItems.find(item => 
+    typeof item.product === 'string' 
+      ? item.product === productData?._id 
+      : item.product?._id === productData?._id
+  );
 
   useEffect(() => {
     if (id) {
@@ -49,10 +57,16 @@ export const ProductPage = () => {
 
   useEffect(() => {
     if (productData) {
-      setIsInCart(cartItems.some(item => (typeof item.product === 'string' ? item.product === productData._id : item.product?._id === productData._id)));
+      const inCart = cartItems.some(item => (typeof item.product === 'string' ? item.product === productData._id : item.product?._id === productData._id));
+      setIsInCart(inCart);
       setIsInWishlist(wishlistItems.some(item => item.product === productData._id));
+      
+      // Set quantity to cart quantity if item is in cart, otherwise keep it as 1
+      if (inCart && currentCartItem) {
+        setQuantity(currentCartItem.quantity);
+      }
     }
-  }, [cartItems, wishlistItems, productData]);
+  }, [cartItems, wishlistItems, productData, currentCartItem]);
 
   useEffect(() => {
     if (!api) return;
@@ -69,20 +83,64 @@ export const ProductPage = () => {
 
   // Reset quantity when product changes or is out of stock
   useEffect(() => {
-    setQuantity(1);
-  }, [productData?._id, isOutOfStock]);
+    if (!isInCart) {
+      setQuantity(1);
+    }
+  }, [productData?._id, isOutOfStock, isInCart]);
 
-  const handleQuantityIncrease = () => {
+  const handleQuantityIncrease = async () => {
     if (productData?.stock && quantity < productData.stock) {
-      setQuantity(prev => prev + 1);
+      const newQty = quantity + 1;
+      setQuantity(newQty);
+      
+      // If item is in cart, update cart quantity
+      if (isInCart && currentCartItem) {
+        setIsUpdatingQty(true);
+        try {
+          await dispatch(updateCartItem({ 
+            itemId: currentCartItem._id, 
+            data: { quantity: newQty } 
+          })).unwrap();
+          toast.success("Cart quantity updated!", { 
+            className: "font-[quicksand]", 
+            icon: <ToastSuccess /> 
+          });
+        } catch (error) {
+          toast.error("Failed to update cart quantity");
+          setQuantity(quantity); // Revert on error
+        } finally {
+          setIsUpdatingQty(false);
+        }
+      }
     } else {
       toast.error(`Only ${productData?.stock} items available in stock`);
     }
   };
 
-  const handleQuantityDecrease = () => {
+  const handleQuantityDecrease = async () => {
     if (quantity > 1) {
-      setQuantity(prev => prev - 1);
+      const newQty = quantity - 1;
+      setQuantity(newQty);
+      
+      // If item is in cart, update cart quantity
+      if (isInCart && currentCartItem) {
+        setIsUpdatingQty(true);
+        try {
+          await dispatch(updateCartItem({ 
+            itemId: currentCartItem._id, 
+            data: { quantity: newQty } 
+          })).unwrap();
+          toast.success("Cart quantity updated!", { 
+            className: "font-[quicksand]", 
+            icon: <ToastSuccess /> 
+          });
+        } catch (error) {
+          toast.error("Failed to update cart quantity");
+          setQuantity(quantity); // Revert on error
+        } finally {
+          setIsUpdatingQty(false);
+        }
+      }
     }
   };
 
@@ -207,8 +265,8 @@ export const ProductPage = () => {
           )}
         </div>
 
-        {/* Quantity Selector - Always visible when not in cart and not out of stock */}
-        {!isInCart && !isOutOfStock && productData?._id && (
+        {/* Quantity Selector - Always visible when not out of stock */}
+        {!isOutOfStock && productData?._id && (
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium text-gray-600">Quantity:</span>
             <div className="flex items-center border border-gray-300 rounded-lg">
@@ -216,10 +274,10 @@ export const ProductPage = () => {
                 variant="ghost"
                 size="sm"
                 onClick={handleQuantityDecrease}
-                disabled={quantity <= 1}
+                disabled={quantity <= 1 || isUpdatingQty}
                 className="h-8 w-8 p-0 hover:bg-gray-100"
               >
-                <Minus className="w-4 h-4" />
+                {isUpdatingQty ? <Loader2 className="w-4 h-4 animate-spin" /> : <Minus className="w-4 h-4" />}
               </Button>
               <span className="px-4 py-1 text-base font-medium min-w-[3ch] text-center">
                 {quantity}
@@ -228,12 +286,15 @@ export const ProductPage = () => {
                 variant="ghost"
                 size="sm"
                 onClick={handleQuantityIncrease}
-                disabled={productData?.stock ? quantity >= productData.stock : true}
+                disabled={(productData?.stock ? quantity >= productData.stock : true) || isUpdatingQty}
                 className="h-8 w-8 p-0 hover:bg-gray-100"
               >
-                <Plus className="w-4 h-4" />
+                {isUpdatingQty ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
               </Button>
             </div>
+            {isInCart && (
+              <span className="text-xs text-green-600 ml-2">✓ In Cart</span>
+            )}
           </div>
         )}
 
@@ -268,6 +329,7 @@ export const ProductPage = () => {
                   } else {
                     await dispatch(removeCartItem(cartEntry._id)).unwrap();
                     setIsInCart(false);
+                    setQuantity(1); // Reset quantity when removing from cart
                     toast.success("Product removed from cart successfully!", {
                       className: "font-[quicksand]",
                       icon: <Trash2 className="w-4 h-4 stroke-red-500" />
@@ -279,7 +341,6 @@ export const ProductPage = () => {
                 await dispatch(addToCart({ product: productData._id, quantity: quantity })).unwrap();
                 setCartLoading(false);
                 setIsInCart(true);
-                setQuantity(1); // Reset quantity after adding to cart
                 return toast.success(`${quantity} ${quantity > 1 ? 'items' : 'item'} added to cart successfully!`, { 
                   className: "font-[quicksand]", 
                   icon: <ToastSuccess /> 
