@@ -17,25 +17,25 @@ export interface ISampleBanners {
 const SAMPLE_BANNERS: ISampleBanners[] = [
   {
     _id: "1",
-    imageUrl: { url: "https://res.cloudinary.com/dh7d6iho8/image/upload/v1762778654/1_loff6u.webp", publicId: "banner1" },
+    imageUrl: { url: "https://res.cloudinary.com/dwocbguvr/image/upload/v1765187637/1_loff6u_ehnyjt.webp", publicId: "banner1" },
     bannerName: "Namak Para",
     bannerText: "Namak Para",
     bannerType: "hero",
     bannerColours: ["A2D2DF", "FF8383"],
-    bannerElementUrl: { url: "https://res.cloudinary.com/dh7d6iho8/image/upload/v1762778654/2_1_h5yxtr.webp", publicId: "element1" },
+    bannerElementUrl: { url: "https://res.cloudinary.com/dwocbguvr/image/upload/v1765187642/2_1_h5yxtr_yzg8fl.webp", publicId: "element1" },
   },
   {
     _id: "2",
-    imageUrl: { url: "https://res.cloudinary.com/dh7d6iho8/image/upload/v1762778655/3_hsndbo.webp", publicId: "banner2" },
+    imageUrl: { url: "https://res.cloudinary.com/dwocbguvr/image/upload/v1765187647/3_hsndbo_n9noxv.webp", publicId: "banner2" },
     bannerName: "Shakkar Para",
     bannerText: "Shakkar Para",
     bannerType: "hero",
     bannerColours: ["7BD3EA", "9694FF"],
-    bannerElementUrl: { url: "https://res.cloudinary.com/dh7d6iho8/image/upload/v1762778656/4_crqsnh.webp", publicId: "element2" },
+    bannerElementUrl: { url: "https://res.cloudinary.com/dwocbguvr/image/upload/v1765187647/4_crqsnh_vcw8lj.webp", publicId: "element2" },
   },
   {
     _id: "3",
-    imageUrl: { url: "https://res.cloudinary.com/dh7d6iho8/image/upload/v1762778659/daadi_kaju_katli_s5chbp.webp", publicId: "banner3" },
+    imageUrl: { url: "https://res.cloudinary.com/dwocbguvr/image/upload/v1765187650/daadi_kaju_katli_s5chbp_wokiim.webp", publicId: "banner3" },
     bannerName: "Kaju Katli",
     bannerText: "Kaju Katli",
     bannerType: "hero",
@@ -44,12 +44,12 @@ const SAMPLE_BANNERS: ISampleBanners[] = [
   },
   {
     _id: "4",
-    imageUrl: { url: "https://res.cloudinary.com/dh7d6iho8/image/upload/v1762778658/5_pdhlas.webp", publicId: "banner4" },
+    imageUrl: { url: "https://res.cloudinary.com/dwocbguvr/image/upload/v1765187648/5_pdhlas_uvff9t.webp", publicId: "banner4" },
     bannerName: "Peri Peri Khakhra",
     bannerText: "Peri Peri Khakhra",
     bannerType: "hero",
     bannerColours: ["F3B95F", "3B1E54"],
-    bannerElementUrl: { url: "https://res.cloudinary.com/dh7d6iho8/image/upload/v1762778658/6_hhkebx.webp", publicId: "element4" },
+    bannerElementUrl: { url: "https://res.cloudinary.com/dwocbguvr/image/upload/v1765187649/6_hhkebx_d22jst.webp", publicId: "element4" },
   },
 ];
 

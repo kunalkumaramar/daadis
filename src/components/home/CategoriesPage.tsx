@@ -481,7 +481,7 @@ export const CategoriesPage = () => {
     return category?.name ?? "Category";
   };
 
-  const ALL_PRODUCTS_IMAGE_URL = "https://res.cloudinary.com/dh7d6iho8/image/upload/v1762778210/Untitled_design_7_t4twix.webp";
+  const ALL_PRODUCTS_IMAGE_URL = "https://res.cloudinary.com/dwocbguvr/image/upload/v1765187651/Untitled_design_7_t4twix_jlhkev.webp";
 
   return (
     <div className="mt-[56px] font-[quicksand] flex w-full min-h-[calc(100vh-56px)]">
