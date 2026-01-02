@@ -88,7 +88,7 @@ export const BlogPage = () => {
             <div className="relative">
                 <div className="relative h-80 overflow-hidden">
                     <img 
-                        src="https://res.cloudinary.com/dh7d6iho8/image/upload/v1762778210/Untitled_design_7_t4twix.webp" 
+                        src="/assets/allproducts.webp" 
                         className="w-full h-full object-cover opacity-50" 
                         alt="Blog header"
                     />

@@ -561,7 +561,7 @@ export const CategoriesPage = () => {
   };
 
   const ALL_PRODUCTS_IMAGE_URL =
-    "/public/assets/allproducts.webp";
+    "/assets/allproducts.webp";
 
   return (
     <div className="mt-[56px] font-[Quicksand] flex w-full min-h-[calc(100vh-56px)]">
