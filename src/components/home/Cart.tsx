@@ -63,14 +63,15 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
     pinCode: "",
     isDefault: true,
   });
-
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
     if (user) {
       setPhoneNumber(user.phoneNumber || "");
       if (user.addresses && user.addresses.length > 0) {
-        const defaultAddr = user.addresses.find((a: Address) => a.isDefault) || user.addresses[0];
+        const defaultAddr =
+          user.addresses.find((a: Address) => a.isDefault) ||
+          user.addresses[0];
         setAddress(defaultAddr);
       }
     }
@@ -79,33 +80,20 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
 
-    if (!phoneNumber || phoneNumber.trim() === "") {
+    if (!phoneNumber || !phoneNumber.trim()) {
       newErrors.phoneNumber = "Phone number is required";
     } else if (!/^\d{10}$/.test(phoneNumber.trim())) {
       newErrors.phoneNumber = "Please enter a valid 10-digit phone number";
     }
 
-    if (!address.name.trim()) {
-      newErrors.name = "Name is required";
-    }
-
-    if (!address.addressLine1.trim()) {
+    if (!address.name.trim()) newErrors.name = "Name is required";
+    if (!address.addressLine1.trim())
       newErrors.addressLine1 = "Address is required";
-    }
-
-    if (!address.city.trim()) {
-      newErrors.city = "City is required";
-    }
-
-    if (!address.state.trim()) {
-      newErrors.state = "State is required";
-    }
-
-    if (!address.pinCode.trim()) {
-      newErrors.pinCode = "Pin code is required";
-    } else if (!/^\d{6}$/.test(address.pinCode.trim())) {
+    if (!address.city.trim()) newErrors.city = "City is required";
+    if (!address.state.trim()) newErrors.state = "State is required";
+    if (!address.pinCode.trim()) newErrors.pinCode = "Pin code is required";
+    else if (!/^\d{6}$/.test(address.pinCode.trim()))
       newErrors.pinCode = "Please enter a valid 6-digit pin code";
-    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -124,7 +112,9 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
       <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b p-4 sm:p-6 flex items-center justify-between">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Complete Your Details</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+            Complete Your Details
+          </h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -137,21 +127,35 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
         <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-6">
           {/* Personal Information (Read-only) */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">Personal Information</h3>
+            <h3 className="text-lg font-semibold text-gray-900">
+              Personal Information
+            </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   First Name
                 </label>
-                <Input value={user?.firstName || ""} disabled className="bg-gray-50" />
+                <Input
+                  value={user?.firstName || ""}
+                  disabled
+                  className="bg-gray-50"
+                />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                <Input value={user?.lastName || ""} disabled className="bg-gray-50" />
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Last Name
+                </label>
+                <Input
+                  value={user?.lastName || ""}
+                  disabled
+                  className="bg-gray-50"
+                />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email
+              </label>
               <Input value={user?.email || ""} disabled className="bg-gray-50" />
             </div>
           </div>
@@ -166,9 +170,8 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
               value={phoneNumber}
               onChange={(e) => {
                 setPhoneNumber(e.target.value);
-                if (errors.phoneNumber) {
+                if (errors.phoneNumber)
                   setErrors((prev) => ({ ...prev, phoneNumber: "" }));
-                }
               }}
               placeholder="Enter 10-digit mobile number"
               maxLength={10}
@@ -181,8 +184,9 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
           {/* Shipping Address */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">Shipping Address</h3>
-
+            <h3 className="text-lg font-semibold text-gray-900">
+              Shipping Address
+            </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -192,16 +196,16 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   value={address.name}
                   onChange={(e) => {
                     setAddress((prev) => ({ ...prev, name: e.target.value }));
-                    if (errors.name) {
+                    if (errors.name)
                       setErrors((prev) => ({ ...prev, name: "" }));
-                    }
                   }}
                   placeholder="e.g., Home, Office"
                   className={errors.name ? "border-red-500" : ""}
                 />
-                {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+                {errors.name && (
+                  <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+                )}
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Pin Code <span className="text-red-500">*</span>
@@ -209,19 +213,22 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 <Input
                   value={address.pinCode}
                   onChange={(e) => {
-                    setAddress((prev) => ({ ...prev, pinCode: e.target.value }));
-                    if (errors.pinCode) {
+                    setAddress((prev) => ({
+                      ...prev,
+                      pinCode: e.target.value,
+                    }));
+                    if (errors.pinCode)
                       setErrors((prev) => ({ ...prev, pinCode: "" }));
-                    }
                   }}
                   placeholder="6-digit pin code"
                   maxLength={6}
                   className={errors.pinCode ? "border-red-500" : ""}
                 />
-                {errors.pinCode && <p className="text-red-500 text-xs mt-1">{errors.pinCode}</p>}
+                {errors.pinCode && (
+                  <p className="text-red-500 text-xs mt-1">{errors.pinCode}</p>
+                )}
               </div>
             </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Complete Address <span className="text-red-500">*</span>
@@ -229,20 +236,24 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
               <Textarea
                 value={address.addressLine1}
                 onChange={(e) => {
-                  setAddress((prev) => ({ ...prev, addressLine1: e.target.value }));
-                  if (errors.addressLine1) {
+                  setAddress((prev) => ({
+                    ...prev,
+                    addressLine1: e.target.value,
+                  }));
+                  if (errors.addressLine1)
                     setErrors((prev) => ({ ...prev, addressLine1: "" }));
-                  }
                 }}
                 placeholder="House number, street name, area"
                 rows={3}
-                className={`resize-none ${errors.addressLine1 ? "border-red-500" : ""}`}
+                className={`resize-none ${errors.addressLine1 ? "border-red-500" : ""
+                  }`}
               />
               {errors.addressLine1 && (
-                <p className="text-red-500 text-xs mt-1">{errors.addressLine1}</p>
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.addressLine1}
+                </p>
               )}
             </div>
-
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -252,16 +263,16 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   value={address.city}
                   onChange={(e) => {
                     setAddress((prev) => ({ ...prev, city: e.target.value }));
-                    if (errors.city) {
+                    if (errors.city)
                       setErrors((prev) => ({ ...prev, city: "" }));
-                    }
                   }}
                   placeholder="City"
                   className={errors.city ? "border-red-500" : ""}
                 />
-                {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city}</p>}
+                {errors.city && (
+                  <p className="text-red-500 text-xs mt-1">{errors.city}</p>
+                )}
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   State <span className="text-red-500">*</span>
@@ -270,28 +281,33 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   value={address.state}
                   onChange={(e) => {
                     setAddress((prev) => ({ ...prev, state: e.target.value }));
-                    if (errors.state) {
+                    if (errors.state)
                       setErrors((prev) => ({ ...prev, state: "" }));
-                    }
                   }}
                   placeholder="State"
                   className={errors.state ? "border-red-500" : ""}
                 />
-                {errors.state && <p className="text-red-500 text-xs mt-1">{errors.state}</p>}
+                {errors.state && (
+                  <p className="text-red-500 text-xs mt-1">{errors.state}</p>
+                )}
               </div>
             </div>
-
-            <label className="flex items-center text-sm">
-              <input
-                type="checkbox"
-                checked={address.isDefault}
-                onChange={(e) =>
-                  setAddress((prev) => ({ ...prev, isDefault: e.target.checked }))
-                }
-                className="mr-2"
-              />
-              Save as default address
-            </label>
+            <div>
+              <label className="flex items-center text-sm">
+                <input
+                  type="checkbox"
+                  checked={address.isDefault}
+                  onChange={(e) =>
+                    setAddress((prev) => ({
+                      ...prev,
+                      isDefault: e.target.checked,
+                    }))
+                  }
+                  className="mr-2"
+                />
+                Save as default address
+              </label>
+            </div>
           </div>
 
           {/* Action Buttons */}
@@ -326,7 +342,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
   );
 };
 
-// Cart Item Component (unchanged)
+// ⭐ UPDATED: Cart Item Component with fixed layout
 interface CartItemProps {
   item: any;
   dispatch: AppDispatch;
@@ -363,13 +379,13 @@ const CartItemComponent: React.FC<CartItemProps> = ({ item, dispatch }) => {
     try {
       await dispatch(removeCartItem(item._id)).unwrap();
       toast.success("Product removed from cart!", {
-        className: "font-Quicksand",
+        className: "font-[Quicksand]",
         icon: <ToastSuccess />,
       });
       dispatch(fetchCartDetails());
     } catch {
       toast.error("Failed to remove product.", {
-        className: "font-Quicksand",
+        className: "font-[Quicksand]",
         icon: <ToastFaliure />,
       });
     }
@@ -383,13 +399,13 @@ const CartItemComponent: React.FC<CartItemProps> = ({ item, dispatch }) => {
         updateCartItem({ itemId: item._id, data: { quantity: newQty } })
       ).unwrap();
       toast.success("Quantity updated!", {
-        className: "font-Quicksand",
+        className: "font-[Quicksand]",
         icon: <ToastSuccess />,
       });
       dispatch(fetchCartDetails());
     } catch {
       toast.error("Failed to update quantity.", {
-        className: "font-Quicksand",
+        className: "font-[Quicksand]",
         icon: <ToastFaliure />,
       });
       setCount(item.quantity);
@@ -413,124 +429,193 @@ const CartItemComponent: React.FC<CartItemProps> = ({ item, dispatch }) => {
   };
 
   return (
-    <div className="grid grid-cols-12 gap-2 sm:gap-4 items-center py-4 relative">
-      {/* Product column - takes more space */}
-      <div className="col-span-12 sm:col-span-6 flex items-center gap-3 sm:gap-4">
-        <div className="relative flex-shrink-0">
-          <img
-            src={product.images?.[0] ?? "default-image.png"}
-            width={56}
-            height={56}
-            className="object-cover rounded-md w-12 h-12 sm:w-14 sm:h-14"
-            alt={product.name}
-          />
-          {/* Small cross button on image - hidden on mobile for better UX */}
+    <>
+      {/* Mobile VIEW - Card Style */}
+      <div className="sm:hidden bg-white rounded-lg border p-4 mb-3">
+        <div className="flex gap-3">
+          {/* Product Image */}
+          <div className="relative flex-shrink-0">
+            <img
+              src={product.images?.[0] ?? "/default-image.png"}
+              width={80}
+              height={80}
+              className="object-cover rounded-md w-20 h-20"
+              alt={product.name}
+            />
+          </div>
+
+          {/* Product Info */}
+          <div className="flex-1 min-w-0">
+            <div className="flex justify-between items-start gap-2 mb-2">
+              <h4 className="text-gray-800 font-semibold text-sm line-clamp-2 flex-1">
+                {product.name}
+              </h4>
+              <Button
+                variant="ghost"
+                size="sm"
+                disabled={isCartUpdating}
+                className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 flex-shrink-0"
+                onClick={handleRemove}
+                aria-label="Remove item"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+
+            {product?.weight && (
+              <p className="text-gray-600 text-xs mb-2">
+                {product.weight.number}
+                {product.weight.unit}
+              </p>
+            )}
+
+            {/* Price and Quantity Row */}
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-gray-700 font-medium text-sm">
+                ₹{product.price}
+              </span>
+
+              {/* Quantity Controls */}
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  disabled={count <= 1 || isCartUpdating || loadingMinus}
+                  size="sm"
+                  className="h-7 w-7 p-0 border border-gray-300"
+                  onClick={onMinusClick}
+                >
+                  {loadingMinus ? (
+                    <Loader2 className="animate-spin w-3 h-3" />
+                  ) : (
+                    <Minus className="w-3 h-3" />
+                  )}
+                </Button>
+                <span className="w-8 text-center font-medium text-sm">
+                  {isCartUpdating && !loadingMinus && !loadingPlus ? (
+                    <Loader2 className="animate-spin w-3 h-3 mx-auto" />
+                  ) : (
+                    count
+                  )}
+                </span>
+                <Button
+                  variant="ghost"
+                  disabled={isCartUpdating || loadingPlus}
+                  size="sm"
+                  className="h-7 w-7 p-0 border border-gray-300"
+                  onClick={onPlusClick}
+                >
+                  {loadingPlus ? (
+                    <Loader2 className="animate-spin w-3 h-3" />
+                  ) : (
+                    <Plus className="w-3 h-3" />
+                  )}
+                </Button>
+              </div>
+
+              {/* Total */}
+              <span className="text-gray-700 font-semibold text-sm">
+                ₹{(product.price * count).toFixed(2)}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop VIEW - Table Row Style */}
+      <div className="hidden sm:grid grid-cols-12 gap-4 items-center py-4 border-b border-gray-100 last:border-b-0">
+        {/* Product column */}
+        <div className="col-span-5 flex items-center gap-4">
+          <div className="relative flex-shrink-0">
+            <img
+              src={product.images?.[0] ?? "/default-image.png"}
+              width={64}
+              height={64}
+              className="object-cover rounded-md w-16 h-16"
+              alt={product.name}
+            />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h4 className="text-gray-800 font-semibold text-base mb-1 line-clamp-2">
+              {product.name}
+            </h4>
+            {product?.weight && (
+              <p className="text-gray-600 text-sm">
+                {product.weight.number}
+                {product.weight.unit}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Price column */}
+        <div className="col-span-2 text-center text-gray-700 font-medium">
+          ₹{product.price}
+        </div>
+
+        {/* Quantity column */}
+        <div className="col-span-2 flex items-center gap-2 justify-center">
           <Button
+            variant="ghost"
+            disabled={count <= 1 || isCartUpdating || loadingMinus}
+            size="sm"
+            className="h-8 w-8 p-0 border border-gray-300"
+            onClick={onMinusClick}
+          >
+            {loadingMinus ? (
+              <Loader2 className="animate-spin w-3 h-3" />
+            ) : (
+              <Minus className="w-3 h-3" />
+            )}
+          </Button>
+          <span className="w-10 text-center font-medium text-sm">
+            {isCartUpdating && !loadingMinus && !loadingPlus ? (
+              <Loader2 className="animate-spin w-4 h-4 mx-auto" />
+            ) : (
+              count
+            )}
+          </span>
+          <Button
+            variant="ghost"
+            disabled={isCartUpdating || loadingPlus}
+            size="sm"
+            className="h-8 w-8 p-0 border border-gray-300"
+            onClick={onPlusClick}
+          >
+            {loadingPlus ? (
+              <Loader2 className="animate-spin w-3 h-3" />
+            ) : (
+              <Plus className="w-3 h-3" />
+            )}
+          </Button>
+        </div>
+
+        {/* Total column */}
+        <div className="col-span-2 text-center text-gray-700 font-semibold">
+          {isCartUpdating && !loadingMinus && !loadingPlus ? (
+            <Loader2 className="animate-spin inline-block w-4 h-4" />
+          ) : (
+            `₹${(product.price * count).toFixed(2)}`
+          )}
+        </div>
+
+        {/* Remove button column */}
+        <div className="col-span-1 text-right">
+          <Button
+            variant="ghost"
+            size="sm"
             disabled={isCartUpdating}
-            className="hidden sm:flex absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full bg-red-500 hover:bg-red-600 hover:scale-110 transition-all shadow-md"
+            className="text-red-500 hover:text-red-700 hover:bg-red-50 h-8 px-3"
             onClick={handleRemove}
             aria-label="Remove item"
           >
-            <X className="w-3 h-3 text-white" />
+            <X className="w-4 h-4" />
           </Button>
         </div>
-        <div className="flex-1 min-w-0">
-          <h4 className="text-gray-800 font-semibold text-sm sm:text-base truncate">
-            {product.name}
-          </h4>
-          {product?.weight && (
-            <p className="text-gray-600 text-xs">
-              {product.weight.number}
-              {product.weight.unit}
-            </p>
-          )}
-          {/* Mobile price - shown only on small screens */}
-          <p className="text-gray-700 font-medium text-sm sm:hidden mt-1">
-            ₹{product.price}
-          </p>
-        </div>
-        {/* Visible Remove button on mobile */}
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={isCartUpdating}
-          className="sm:hidden flex-shrink-0 h-8 px-2 border-red-500 text-red-500 hover:bg-red-50 hover:text-red-600"
-          onClick={handleRemove}
-          aria-label="Remove item"
-        >
-          <X className="w-4 h-4" />
-        </Button>
       </div>
-
-      {/* Price column - hidden on mobile (shown in product name area) */}
-      <div className="hidden sm:block sm:col-span-2 text-gray-700 text-center">
-        ₹{product.price}
-      </div>
-
-      {/* Quantity column */}
-      <div className="col-span-8 sm:col-span-2 flex items-center gap-2 justify-start sm:justify-center">
-        <span className="text-xs sm:text-sm text-gray-600 sm:hidden mr-1">Qty:</span>
-        <Button
-          variant="ghost"
-          disabled={count <= 1 || isCartUpdating || loadingMinus}
-          size="sm"
-          className="h-7 w-7 sm:h-8 sm:w-8 p-0 border border-gray-300"
-          onClick={onMinusClick}
-        >
-          {loadingMinus ? (
-            <Loader2 className="animate-spin w-3 h-3" />
-          ) : (
-            <Minus className="w-3 h-3" />
-          )}
-        </Button>
-        <span className="w-8 text-center font-medium text-sm">
-          {isCartUpdating && !loadingMinus && !loadingPlus ? (
-            <Loader2 className="animate-spin w-3 h-3 mx-auto" />
-          ) : (
-            count
-          )}
-        </span>
-        <Button
-          variant="ghost"
-          disabled={isCartUpdating || loadingPlus}
-          size="sm"
-          className="h-7 w-7 sm:h-8 sm:w-8 p-0 border border-gray-300"
-          onClick={onPlusClick}
-        >
-          {loadingPlus ? (
-            <Loader2 className="animate-spin w-3 h-3" />
-          ) : (
-            <Plus className="w-3 h-3" />
-          )}
-        </Button>
-      </div>
-
-      {/* Total column */}
-      <div className="col-span-4 sm:col-span-2 text-gray-700 text-right font-medium text-sm sm:text-base">
-        {isCartUpdating && !loadingMinus && !loadingPlus ? (
-          <Loader2 className="animate-spin inline-block w-4 h-4" />
-        ) : (
-          `₹${product.price * count}`
-        )}
-      </div>
-
-      {/* Desktop Remove button - separate column for better visibility */}
-      <div className="hidden sm:block sm:col-span-12 sm:absolute sm:right-0 sm:top-1/2 sm:-translate-y-1/2">
-        <Button
-          variant="ghost"
-          size="sm"
-          disabled={isCartUpdating}
-          className="text-red-500 hover:text-red-700 hover:bg-red-50 h-8 px-3"
-          onClick={handleRemove}
-          aria-label="Remove item"
-        >
-          <X className="w-4 h-4 mr-1" />
-          <span className="text-xs">Remove</span>
-        </Button>
-      </div>
-    </div>
+    </>
   );
 };
+
 
 // Main Cart Component
 export const Cart: React.FC = () => {
@@ -615,27 +700,33 @@ export const Cart: React.FC = () => {
           })
           .catch((err) => {
             setCouponApplied(false);
-            toast.error(err || err.message || "Invalid coupon code");
+            toast.error(err || (err as any).message || "Invalid coupon code");
           });
       })
       .catch((err) => {
         setCouponApplied(false);
-        toast.error(err || err.message || "Invalid coupon code");
+        toast.error(err || (err as any).message || "Invalid coupon code");
       });
   };
 
   // Check if user needs to complete profile
   const needsProfileCompletion = () => {
     if (!user) return true;
-    if (!user.phoneNumber || user.phoneNumber.trim() === "") return true;
+    if (!user.phoneNumber || !user.phoneNumber.trim()) return true;
     if (!user.addresses || user.addresses.length === 0) return true;
-    const defaultAddress = user.addresses.find((a: Address) => a.isDefault) || user.addresses[0];
+
+    const defaultAddress =
+      user.addresses.find((a: Address) => a.isDefault) || user.addresses[0];
     if (!defaultAddress || !defaultAddress.city) return true;
+
     return false;
   };
 
   // Handle modal submit
-  const handleModalSubmit = async (data: { phoneNumber: string; address: Address }) => {
+  const handleModalSubmit = async (data: {
+    phoneNumber: string;
+    address: Address;
+  }) => {
     setModalLoading(true);
     try {
       // Update user profile with phone number and address
@@ -669,16 +760,8 @@ export const Cart: React.FC = () => {
     setCheckoutLoading(true);
     try {
       const orderPayload = {
-        shippingAddress: {
-          ...address,
-          country: "India",
-          phone: phoneNumber,
-        },
-        billingAddress: {
-          ...address,
-          country: "India",
-          phone: phoneNumber,
-        },
+        shippingAddress: { ...address, country: "India", phone: phoneNumber },
+        billingAddress: { ...address, country: "India", phone: phoneNumber },
         paymentMethod: "razorpay",
         notes: orderNote,
         totalAmount: grandTotal,
@@ -694,6 +777,7 @@ export const Cart: React.FC = () => {
 
       // Fix: Extract orderId from the response data object
       const orderId = orderRes.data?.orderId || orderRes.data?._id;
+
       if (!orderId) {
         console.error("Order response structure:", orderRes);
         throw new Error("Failed to get order ID from response");
@@ -707,7 +791,9 @@ export const Cart: React.FC = () => {
       const paymentData = paymentRes.data || paymentRes;
       const order = paymentData.payment;
 
-      if (!paymentData.key || !order) throw new Error("Invalid payment data");
+      if (!paymentData.key || !order) {
+        throw new Error("Invalid payment data");
+      }
 
       const options = {
         key: paymentData.key,
@@ -723,7 +809,7 @@ export const Cart: React.FC = () => {
             !response.razorpay_payment_id ||
             !response.razorpay_signature
           ) {
-            console.error("Missing Razorpay fields", response);
+            console.error("Missing Razorpay fields:", response);
             toast.error("Payment verification failed - incomplete data");
             return;
           }
@@ -763,13 +849,14 @@ export const Cart: React.FC = () => {
       };
 
       console.log("Razorpay options object:", options);
-      const rzp = new (window as any).Razorpay(options);
 
+      const rzp = new (window as any).Razorpay(options);
       rzp.on("payment.failed", (response: any) => {
         console.error("Payment failed:", response.error);
-        toast.error(`Payment failed: ${response.error.description || "Unknown error"}`);
+        toast.error(
+          `Payment failed: ${response.error.description || "Unknown error"}`
+        );
       });
-
       rzp.open();
     } catch (error) {
       console.error("Checkout error:", error);
@@ -801,7 +888,8 @@ export const Cart: React.FC = () => {
     }
 
     // If all details exist, proceed directly
-    const defaultAddress = user.addresses.find((a: Address) => a.isDefault) || user.addresses[0];
+    const defaultAddress =
+      user.addresses.find((a: Address) => a.isDefault) || user.addresses[0];
     proceedToPayment(user.phoneNumber, defaultAddress);
   };
 
@@ -820,15 +908,17 @@ export const Cart: React.FC = () => {
       className="flex font-[Quicksand] text-sm items-center min-h-[calc(100vh-56px)] justify-center py-5 flex-col w-full mt-14"
     >
       <h1 className="font-[Quicksand] mb-4 text-xl">Shopping cart</h1>
+
       <div className="w-full max-w-6xl px-4">
-        {/* Cart Items Section */}
-        <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-          {/* Header Row */}
-          <div className="grid grid-cols-12 gap-4 border-b pb-4 mb-4 font-medium text-gray-700">
-            <div className="col-span-6">Product</div>
+        {/* ⭐ Cart Items Section */}
+        <div className="bg-white rounded-lg shadow-sm border p-3 sm:p-6 mb-6">
+          {/* ⭐ Desktop Header Row - Hidden on mobile */}
+          <div className="hidden sm:grid grid-cols-12 gap-4 border-b pb-4 mb-4 font-medium text-gray-700">
+            <div className="col-span-5">Product</div>
             <div className="col-span-2 text-center">Price</div>
             <div className="col-span-2 text-center">Quantity</div>
-            <div className="col-span-2 text-right">Total</div>
+            <div className="col-span-2 text-center">Total</div>
+            <div className="col-span-1"></div>
           </div>
 
           {/* Empty Cart Message */}
@@ -838,32 +928,33 @@ export const Cart: React.FC = () => {
             </div>
           ) : (
             /* Cart Items */
-            cartItems?.map((cartItem: any, index: number) => (
-              <div key={cartItem._id}>
-                <CartItemComponent
-                  item={cartItem}
-                  userPresent={!!user}
-                  dispatch={dispatch}
-                  quantity={cartItem.quantity}
-                  itemId={cartItem._id}
-                  product={
-                    typeof cartItem.product === "object"
-                      ? (cartItem.product as Product)
-                      : ({} as Product)
-                  }
-                />
-                {index !== cartItems.length - 1 && <hr className="my-4 border-gray-200" />}
-              </div>
+            cartItems?.map((cartItem: any) => (
+              <CartItemComponent
+                key={cartItem._id}
+                item={cartItem}
+                userPresent={!!user}
+                dispatch={dispatch}
+                quantity={cartItem.quantity}
+                itemId={cartItem._id}
+                product={
+                  typeof cartItem.product === "object"
+                    ? (cartItem.product as Product)
+                    : ({} as Product)
+                }
+              />
             ))
           )}
         </div>
 
         {/* Bottom Section - Coupon and Summary */}
         {cartItems && cartItems.length > 0 && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
             {/* Left Column - Coupon Code */}
             <div className="bg-white rounded-lg shadow-sm border p-6">
-              <label htmlFor="coupon" className="block mb-3 font-medium text-gray-700">
+              <label
+                htmlFor="coupon"
+                className="block mb-3 font-medium text-gray-700"
+              >
                 Coupon Code
               </label>
               <div className="flex gap-3">
@@ -884,19 +975,19 @@ export const Cart: React.FC = () => {
                   {discountLoading ? "Applying..." : "Apply"}
                 </Button>
               </div>
-
               {discountFetchError && (
-                <p className="text-red-600 mt-2 text-sm">{String(discountFetchError)}</p>
+                <p className="text-red-600 mt-2 text-sm">
+                  {String(discountFetchError)}
+                </p>
               )}
-
               {couponApplied && currentDiscount && (
                 <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-md">
                   <p className="text-green-700 text-sm font-medium">
-                    {currentDiscount.code} coupon applied (
+                    {currentDiscount.code} coupon applied{" "}
                     {currentDiscount.discountType === "percentage"
                       ? `${currentDiscount.value}%`
                       : `₹${currentDiscount.value}`}{" "}
-                    off)
+                    off
                   </p>
                   <button
                     type="button"
@@ -913,7 +1004,9 @@ export const Cart: React.FC = () => {
 
             {/* Right Column - Order Summary */}
             <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h3 className="text-lg font-semibold mb-4 text-gray-800">Order Summary</h3>
+              <h3 className="text-lg font-semibold mb-4 text-gray-800">
+                Order Summary
+              </h3>
               <div className="space-y-3 mb-4">
                 <div className="flex justify-between text-gray-600">
                   <span>Subtotal</span>
@@ -943,7 +1036,10 @@ export const Cart: React.FC = () => {
         {cartItems && cartItems.length > 0 && (
           <div className="mt-8 bg-white rounded-lg shadow-sm border p-6">
             <div className="max-w-md mx-auto">
-              <label htmlFor="order-note" className="block mb-3 font-medium text-gray-700">
+              <label
+                htmlFor="order-note"
+                className="block mb-3 font-medium text-gray-700"
+              >
                 Add a note to your order
               </label>
               <Textarea
