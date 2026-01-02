@@ -19,23 +19,23 @@ import {
   selectCategoryLoading,
 } from "../../redux1/categorySlice";
 
-import { 
-  addToCart, 
-  removeCartItem, 
+import {
+  addToCart,
+  removeCartItem,
   updateCartItem
 } from "../../redux1/cartSlice";
 
-import { 
-  addToWishlist, 
-  removeFromWishlist 
+import {
+  addToWishlist,
+  removeFromWishlist
 } from "../../redux1/wishlistSlice";
 
 import { RootState, AppDispatch } from "../../redux1/store";
 
 // Lazy Image Component for performance optimization
-const LazyImage = ({ src, alt, className, overlayContent }: { 
-  src: string; 
-  alt: string; 
+const LazyImage = ({ src, alt, className, overlayContent }: {
+  src: string;
+  alt: string;
   className?: string;
   overlayContent?: React.ReactNode;
 }) => {
@@ -75,7 +75,7 @@ const LazyImage = ({ src, alt, className, overlayContent }: {
           <ImageOff className="w-8 h-8 text-gray-400" />
         </div>
       )}
-      
+
       {imageSrc && (
         <>
           <img
@@ -89,7 +89,7 @@ const LazyImage = ({ src, alt, className, overlayContent }: {
             }}
             style={{ display: isLoading ? 'none' : 'block' }}
           />
-          
+
           {hasError && (
             <div className="absolute inset-0 bg-gray-200 flex items-center justify-center rounded-t-[inherit]">
               <ImageOff className="w-8 h-8 text-gray-400" />
@@ -97,7 +97,7 @@ const LazyImage = ({ src, alt, className, overlayContent }: {
           )}
         </>
       )}
-      
+
       {overlayContent}
     </div>
   );
@@ -109,32 +109,35 @@ const ProductCard = ({
   currentWishList,
 }: {
   product: Product;
-  currentCart: any[];
+  currentCart: any;
   currentWishList: Product[];
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const [isCartLoading, setCartLoading] = useState(false);
   const [isWishLoading, setWishLoading] = useState(false);
-  
+
   // Get user authentication status
   const user = useSelector((state: RootState) => state.auth.user);
   const isAuthenticated = !!user;
 
   // Check if product is out of stock
-  const isOutOfStock = product.stock === 0;
+  const isOutOfStock = product.stock <= 0;
 
   // Check if product is in cart and get its cart entry
-  const cartEntry = currentCart.find(item =>
-    typeof item.product === 'object'
+  const cartEntry = currentCart.find((item: any) =>
+    typeof item.product === "object"
       ? item.product._id === product._id
       : item.product === product._id
   );
   const isInCart = !!cartEntry;
-  
+
   // Initialize quantity from cart if exists, otherwise default to 1
   const [quantity, setQuantity] = useState(isInCart ? cartEntry.quantity : 1);
-  
+  const [loadingPlus, setLoadingPlus] = useState(false);
+  const [loadingMinus, setLoadingMinus] = useState(false);
+
+  // Check if product is in wishlist
   const [isInWishlist, setIsInWishlist] = useState(
     currentWishList.some((item) => item._id === product._id)
   );
@@ -148,35 +151,105 @@ const ProductCard = ({
     }
   }, [isInCart, cartEntry]);
 
-  const handleQuantityIncrease = (e: React.MouseEvent) => {
+  // Handle quantity increase
+  const handleQuantityIncrease = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (product.stock && quantity < product.stock) {
-      setQuantity((prev: number) => prev + 1);
-    } else {
+
+    if (!isAuthenticated) {
+      toast.error("Please login to modify cart");
+      navigate("/auth");
+      return;
+    }
+
+    if (isOutOfStock) {
+      return;
+    }
+
+    // Check stock availability
+    if (quantity >= product.stock) {
       toast.error(`Only ${product.stock} items available`);
+      return;
+    }
+
+    const newQuantity = quantity + 1;
+    setLoadingPlus(true);
+
+    try {
+      if (isInCart && cartEntry) {
+        // Update existing cart item
+        await dispatch(
+          updateCartItem({ itemId: cartEntry._id, data: { quantity: newQuantity } })
+        ).unwrap();
+        setQuantity(newQuantity);
+        toast.success("Quantity updated", { icon: <ShoppingCart /> });
+      } else {
+        // Add to cart with new quantity
+        await dispatch(
+          addToCart({ product: product._id, quantity: newQuantity })
+        ).unwrap();
+        toast.success("Item added to cart", { icon: <ShoppingCart /> });
+      }
+    } catch (error) {
+      toast.error("Failed to update cart");
+      // Reset to cart value on error
+      if (isInCart && cartEntry) {
+        setQuantity(cartEntry.quantity);
+      }
+    } finally {
+      setLoadingPlus(false);
     }
   };
 
-  const handleQuantityDecrease = (e: React.MouseEvent) => {
+  // Handle quantity decrease
+  const handleQuantityDecrease = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (quantity > 1) {
-      setQuantity((prev: number) => prev - 1);
+
+    if (!isAuthenticated) {
+      toast.error("Please login to modify cart");
+      navigate("/auth");
+      return;
+    }
+
+    if (quantity <= 1) {
+      return;
+    }
+
+    const newQuantity = quantity - 1;
+    setLoadingMinus(true);
+
+    try {
+      if (isInCart && cartEntry) {
+        // Update existing cart item
+        await dispatch(
+          updateCartItem({ itemId: cartEntry._id, data: { quantity: newQuantity } })
+        ).unwrap();
+        setQuantity(newQuantity);
+        toast.success("Quantity updated", { icon: <ShoppingCart /> });
+      }
+    } catch (error) {
+      toast.error("Failed to update cart");
+      // Reset to cart value on error
+      if (isInCart && cartEntry) {
+        setQuantity(cartEntry.quantity);
+      }
+    } finally {
+      setLoadingMinus(false);
     }
   };
 
   const handleCartAction = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     // Check if user is authenticated
     if (!isAuthenticated) {
       toast.error("Please login to add items to cart");
-      navigate('/auth');
+      navigate("/auth");
       return;
     }
-    
+
     // Prevent adding to cart if out of stock
     if (isOutOfStock) {
       toast.error("Product is out of stock");
@@ -186,41 +259,17 @@ const ProductCard = ({
     setCartLoading(true);
     try {
       if (isInCart) {
-        // Update quantity if product is already in cart
-        await dispatch(updateCartItem({ 
-          itemId: cartEntry._id, 
-          data: { quantity } 
-        })).unwrap();
-        toast.success("Cart updated successfully", { icon: <ShoppingCart /> });
+        // Navigate to cart if already in cart
+        navigate("/cart");
       } else {
-        // Add new item to cart
-        await dispatch(addToCart({ product: product._id, quantity })).unwrap();
-        toast.success(`${quantity} ${quantity > 1 ? 'items' : 'item'} added to cart`, { icon: <ShoppingCart /> });
+        // Add new item to cart with quantity
+        await dispatch(
+          addToCart({ product: product._id, quantity: quantity })
+        ).unwrap();
+        toast.success("Item added to cart", { icon: <ShoppingCart /> });
       }
     } catch (error) {
       toast.error("Failed to update cart");
-      // Reset quantity to cart value on error
-      if (isInCart && cartEntry) {
-        setQuantity(cartEntry.quantity);
-      }
-    } finally {
-      setCartLoading(false);
-    }
-  };
-
-  const handleRemoveFromCart = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    if (!cartEntry) return;
-    
-    setCartLoading(true);
-    try {
-      await dispatch(removeCartItem(cartEntry._id)).unwrap();
-      setQuantity(1); // Reset to default
-      toast.success("Removed from cart", { icon: <Trash2 /> });
-    } catch {
-      toast.error("Failed to remove from cart");
     } finally {
       setCartLoading(false);
     }
@@ -229,20 +278,14 @@ const ProductCard = ({
   const handleWishToggle = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     // Check if user is authenticated
     if (!isAuthenticated) {
       toast.error("Please login to add items to wishlist");
-      navigate('/auth');
+      navigate("/auth");
       return;
     }
 
-    // Prevent adding to wishlist if out of stock and not already in wishlist
-    if (isOutOfStock && !isInWishlist) {
-      toast.error("Cannot add out of stock product to wishlist");
-      return;
-    }
-    
     setWishLoading(true);
     try {
       if (isInWishlist) {
@@ -252,10 +295,9 @@ const ProductCard = ({
         toast.success("Removed from wishlist", { icon: <Trash2 /> });
       } else {
         // Add to wishlist
-        await dispatch(addToWishlist({ 
-          productId: product._id, 
-          priceWhenAdded: product.price 
-        })).unwrap();
+        await dispatch(
+          addToWishlist({ productId: product._id, priceWhenAdded: product.price })
+        ).unwrap();
         setIsInWishlist(true);
         toast.success("Added to wishlist", { icon: <Heart /> });
       }
@@ -267,22 +309,24 @@ const ProductCard = ({
   };
 
   return (
-    <div className={cn(
-      "w-full h-full flex flex-col rounded-lg shadow-xl",
-      isOutOfStock && "opacity-75"
-    )}>
-      {/* Product Image with Stock Overlay - Fixed aspect ratio */}
+    <div
+      className={cn(
+        "w-full h-full flex flex-col rounded-lg shadow-lg overflow-hidden bg-white",
+        isOutOfStock && "opacity-75"
+      )}
+    >
+      {/* Product Image with Stock Overlay and Wishlist Button */}
       <div className="relative aspect-square w-full">
         <LazyImage
           src={product.images[0] ?? ""}
           alt={product.name}
           className={cn(
-            "border-none rounded-t-[inherit] object-cover w-full h-full",
+            "border-none object-cover w-full h-full",
             isOutOfStock && "grayscale"
           )}
           overlayContent={
             isOutOfStock && (
-              <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-t-[inherit]">
+              <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                 <span className="text-white font-bold sm:text-lg text-sm bg-red-500 px-2 sm:px-3 py-1 rounded">
                   OUT OF STOCK
                 </span>
@@ -290,114 +334,127 @@ const ProductCard = ({
             )
           }
         />
+
+        {/* Wishlist button */}
+        <button
+          onClick={handleWishToggle}
+          className="absolute top-3 right-3 z-10 bg-white rounded-full p-1.5 sm:p-2 shadow-md hover:shadow-lg transition-all"
+          disabled={isWishLoading}
+        >
+          <Heart
+            className={cn(
+              "w-4 h-4 sm:w-5 sm:h-5 hover:stroke-red-500 hover:scale-110 transition-all duration-150",
+              isInWishlist && "stroke-red-500 fill-red-500",
+              isWishLoading && "animate-pulse"
+            )}
+          />
+        </button>
       </div>
 
-      {/* Content section with flex-grow to maintain consistent height */}
-      <div className="w-full flex flex-col gap-2 p-3 sm:p-4 flex-grow rounded-b-[inherit]">
-        {/* Product name with truncation and fixed height */}
-        <h3 className="font-[quicksand] text-base sm:text-xl line-clamp-2 min-h-[2.5rem] sm:min-h-[3rem]">
+      {/* Content section */}
+      <div className="w-full flex flex-col gap-2 p-3 sm:p-4 flex-grow">
+        {/* Product name */}
+        <h3 className="font-quicksand text-base sm:text-lg font-semibold line-clamp-2 min-h-[2.5rem] sm:min-h-[3rem]">
           {product.name}
         </h3>
-        
-        {/* Weight and price */}
-        <h6 className="text-gray-600 text-sm sm:text-base">
-          {product.weight.number}{product.weight.unit}
-        </h6>
-        <h6 className="text-sm sm:text-base font-semibold">₹{product.price}</h6>
-        
-        {/* Stock Status - Only show if out of stock */}
-        {isOutOfStock && (
-          <div className="text-xs sm:text-sm">
-            <span className="text-red-500 font-medium">Out of Stock</span>
+
+        {/* Weight and Price in same row */}
+        <div className="flex items-center justify-between">
+          <span className="text-gray-600 text-sm sm:text-base">
+            {product.weight.number}{product.weight.unit}
+          </span>
+          <span className="text-base sm:text-lg font-bold text-gray-900">
+            ₹{product.price}
+          </span>
+        </div>
+
+        {/* Tags */}
+        {product.tags && product.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {product.tags.map((tag, index) => (
+              <span
+                key={index}
+                className="px-2 py-0.5 text-xs sm:text-sm bg-yellow-100 text-yellow-800 rounded-full border border-yellow-300"
+              >
+                {tag}
+              </span>
+            ))}
           </div>
         )}
 
-        {/* Quantity Selector - Always visible when not out of stock */}
+        {/* Quantity Selector - Only show when not out of stock */}
         {!isOutOfStock && (
           <div className="flex items-center justify-center gap-2 py-1">
             <Button
               variant="ghost"
               size="sm"
               onClick={handleQuantityDecrease}
-              disabled={quantity <= 1 || isCartLoading}
+              disabled={quantity <= 1 || isCartLoading || loadingMinus || loadingPlus}
               className="h-7 w-7 p-0 hover:bg-gray-200"
             >
-              <Minus className="w-3 h-3" />
+              {loadingMinus ? (
+                <Loader2 className="w-3 h-3 animate-spin" />
+              ) : (
+                <Minus className="w-3 h-3" />
+              )}
             </Button>
+
             <span className="px-2 text-sm font-medium min-w-[2ch] text-center">
-              {quantity}
+              {loadingPlus || loadingMinus ? (
+                <Loader2 className="w-3 h-3 animate-spin mx-auto" />
+              ) : (
+                quantity
+              )}
             </span>
+
             <Button
               variant="ghost"
               size="sm"
               onClick={handleQuantityIncrease}
-              disabled={product.stock ? quantity >= product.stock : true || isCartLoading}
+              disabled={
+                (product.stock ? quantity >= product.stock : true) ||
+                isCartLoading ||
+                loadingMinus ||
+                loadingPlus
+              }
               className="h-7 w-7 p-0 hover:bg-gray-200"
             >
-              <Plus className="w-3 h-3" />
+              {loadingPlus ? (
+                <Loader2 className="w-3 h-3 animate-spin" />
+              ) : (
+                <Plus className="w-3 h-3" />
+              )}
             </Button>
           </div>
         )}
 
-        {/* Action Buttons with consistent positioning */}
-        <div className="mt-auto flex flex-col gap-2">
-          {/* Add/Update Cart Button */}
-          <Button
-            className={cn(
-              "flex justify-center items-center gap-2 w-full text-xs sm:text-sm",
-              isOutOfStock && "opacity-50 cursor-not-allowed"
-            )}
-            variant={isOutOfStock ? "secondary" : "default"}
-            onClick={handleCartAction}
-            disabled={isCartLoading || isOutOfStock}
-          >
-            {isCartLoading ? (
-              <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" />
-            ) : isOutOfStock ? (
-              "Out of Stock"
-            ) : isInCart ? (
-              <span className="truncate">Update Cart</span>
-            ) : (
-              <span className="truncate">Add to Cart</span>
-            )}
-            <ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-          </Button>
-
-          {/* Remove from Cart Button - Only show when in cart */}
-          {isInCart && !isOutOfStock && (
-            <Button
-              className="flex justify-center items-center gap-2 w-full text-xs sm:text-sm"
-              variant="ghost"
-              onClick={handleRemoveFromCart}
-              disabled={isCartLoading}
-            >
-              {isCartLoading ? (
-                <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" />
-              ) : (
-                <>
-                  <span className="truncate">Remove from Cart</span>
-                  <Trash2 className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                </>
-              )}
-            </Button>
-          )}
-        </div>
-      </div>
-      
-      {/* Wishlist button */}
-      <button 
-        onClick={handleWishToggle}
-        className="absolute top-[3%] right-[5%] z-10"
-        disabled={isWishLoading}
-      >
-        <Heart 
+        {/* Add to Cart / Go to Cart Button */}
+        <Button
           className={cn(
-            "w-5 h-5 sm:w-6 sm:h-6 hover:stroke-red-500 hover:scale-110 transition-all duration-150",
-            isInWishlist && "stroke-red-500 fill-red-500",
-            isWishLoading && "animate-pulse"
+            "flex justify-center items-center gap-2 w-full text-xs sm:text-sm mt-auto",
+            isOutOfStock && "opacity-50 cursor-not-allowed"
           )}
-        />
-      </button>
+          variant={isOutOfStock ? "secondary" : "default"}
+          onClick={handleCartAction}
+          disabled={isCartLoading || isOutOfStock || loadingPlus || loadingMinus}
+        >
+          {isCartLoading ? (
+            <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" />
+          ) : isOutOfStock ? (
+            "Out of Stock"
+          ) : isInCart ? (
+            <>
+              <span className="truncate">Go to Cart</span>
+              <ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+            </>
+          ) : (
+            <>
+              <span className="truncate">Add to Cart</span>
+              <ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+            </>
+          )}
+        </Button>
+      </div>
     </div>
   );
 };
@@ -410,7 +467,7 @@ export const CategoriesPage = () => {
   const categoriesLoading = useSelector(selectCategoryLoading);
   const allProducts = useSelector((state: RootState) => state.product.products);
   const categoryProducts = useSelector((state: RootState) => state.product.categoryProducts);
-  
+
   // Get actual cart and wishlist data from Redux
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const wishlistItems = useSelector((state: RootState) => state.wishlist.items);
@@ -434,7 +491,7 @@ export const CategoriesPage = () => {
 
   // Create a combined products array for wishlist mapping
   const allAvailableProducts = [...(allProducts || []), ...(categoryProducts || [])];
-  const uniqueProducts = allAvailableProducts.filter((product, index, self) => 
+  const uniqueProducts = allAvailableProducts.filter((product, index, self) =>
     index === self.findIndex(p => p._id === product._id)
   );
 
@@ -461,7 +518,7 @@ export const CategoriesPage = () => {
     } else {
       productsToSort = categoryProducts;
     }
-    
+
     // Sort products to show in-stock first, out-of-stock last
     const sortedProducts = productsToSort ? sortProductsByStock(productsToSort) : [];
     setProducts(sortedProducts);
@@ -515,7 +572,7 @@ export const CategoriesPage = () => {
             >
               {cat.name}
             </Link>
-          ))}   
+          ))}
         </div>
       </section>
 
@@ -525,7 +582,7 @@ export const CategoriesPage = () => {
           <Link to={"/"}>
             <ChevronLeft className="hover:scale-125 transition-all duration-300" />
           </Link>
-          
+
           {/* Mobile Category Dropdown */}
           <div className="relative">
             <Button
@@ -536,12 +593,12 @@ export const CategoriesPage = () => {
               <span>{getCategoryName()}</span>
               <ChevronDown className={cn("w-4 h-4 transition-transform", mobileDropdownOpen && "rotate-180")} />
             </Button>
-            
+
             {/* Dropdown Menu */}
             {mobileDropdownOpen && (
               <div className="absolute right-0 top-full mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-80 overflow-y-auto">
                 {/* All Products Option */}
-                <Link 
+                <Link
                   to="/category/all"
                   onClick={() => {
                     setCurrentCategory("all");
@@ -554,7 +611,7 @@ export const CategoriesPage = () => {
                 >
                   All Products
                 </Link>
-                
+
                 {/* Category Options */}
                 {categories.map((cat) => (
                   <Link
@@ -582,7 +639,7 @@ export const CategoriesPage = () => {
           <ChevronLeft className="hover:scale-125 transition-all duration-300 mb-4 top-4 left-4" />
         </Link>
 
-        
+
         {/* Category banner with lazy loading */}
         <div className="mb-6">
           {currentCategory === "all" ? (
@@ -610,9 +667,9 @@ export const CategoriesPage = () => {
           {products?.length === 0 && <p className="col-span-full text-center font-[quicksand] text-yellow-600 w-full h-full">No products under this category!</p>}
           {products?.map((product) => {
             return (
-              <Link 
-                key={product._id} 
-                to={`/product/${product._id}`} 
+              <Link
+                key={product._id}
+                to={`/product/${product._id}`}
                 className="block hover:scale-105 transition-transform duration-200 h-full"
               >
                 <ProductCard
@@ -631,11 +688,11 @@ export const CategoriesPage = () => {
 
       {/* Click outside to close dropdown */}
       {mobileDropdownOpen && (
-        <div 
-          className="sm:hidden fixed inset-0 z-40" 
+        <div
+          className="sm:hidden fixed inset-0 z-40"
           onClick={() => setMobileDropdownOpen(false)}
         />
       )}
     </div>
-  ); 
+  );
 };
