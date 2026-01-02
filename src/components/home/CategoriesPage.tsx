@@ -1,39 +1,49 @@
-//CategoryPage.tsx
 import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
-import { ChevronLeft, Heart, ImageOff, Loader2, ShoppingCart, Trash2, ChevronDown, Menu, Plus, Minus } from "lucide-react";
+import {
+  ChevronLeft,
+  Heart,
+  ImageOff,
+  Loader2,
+  ShoppingCart,
+  Trash2,
+  ChevronDown,
+  Menu,
+  Plus,
+  Minus,
+} from "lucide-react";
 import { cn } from "../../lib/utils";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
-
 import {
   getAllProducts,
   getProductsByCategory,
   Product,
 } from "../../redux1/productSlice";
-
 import {
   getAllCategories,
   selectCategories,
   selectCategoryLoading,
 } from "../../redux1/categorySlice";
-
 import {
   addToCart,
   removeCartItem,
-  updateCartItem
+  updateCartItem,
 } from "../../redux1/cartSlice";
-
 import {
   addToWishlist,
-  removeFromWishlist
+  removeFromWishlist,
 } from "../../redux1/wishlistSlice";
-
 import { RootState, AppDispatch } from "../../redux1/store";
 
 // Lazy Image Component for performance optimization
-const LazyImage = ({ src, alt, className, overlayContent }: {
+const LazyImage = ({
+  src,
+  alt,
+  className,
+  overlayContent,
+}: {
   src: string;
   alt: string;
   className?: string;
@@ -71,38 +81,34 @@ const LazyImage = ({ src, alt, className, overlayContent }: {
   return (
     <div ref={setImageRef} className="relative w-full h-full">
       {isLoading && !imageSrc && (
-        <div className="absolute inset-0 bg-gray-200 animate-pulse rounded-t-[inherit] flex items-center justify-center">
+        <div className="absolute inset-0 bg-gray-200 animate-pulse rounded-t-inherit flex items-center justify-center">
           <ImageOff className="w-8 h-8 text-gray-400" />
         </div>
       )}
-
       {imageSrc && (
-        <>
-          <img
-            src={imageSrc}
-            alt={alt}
-            className={className}
-            onLoad={() => setIsLoading(false)}
-            onError={() => {
-              setIsLoading(false);
-              setHasError(true);
-            }}
-            style={{ display: isLoading ? 'none' : 'block' }}
-          />
-
-          {hasError && (
-            <div className="absolute inset-0 bg-gray-200 flex items-center justify-center rounded-t-[inherit]">
-              <ImageOff className="w-8 h-8 text-gray-400" />
-            </div>
-          )}
-        </>
+        <img
+          src={imageSrc}
+          alt={alt}
+          className={className}
+          onLoad={() => setIsLoading(false)}
+          onError={() => {
+            setIsLoading(false);
+            setHasError(true);
+          }}
+          style={{ display: isLoading ? "none" : "block" }}
+        />
       )}
-
+      {hasError && (
+        <div className="absolute inset-0 bg-gray-200 flex items-center justify-center rounded-t-inherit">
+          <ImageOff className="w-8 h-8 text-gray-400" />
+        </div>
+      )}
       {overlayContent}
     </div>
   );
 };
 
+// ==================== UPDATED PRODUCT CARD COMPONENT ====================
 const ProductCard = ({
   product,
   currentCart,
@@ -179,7 +185,10 @@ const ProductCard = ({
       if (isInCart && cartEntry) {
         // Update existing cart item
         await dispatch(
-          updateCartItem({ itemId: cartEntry._id, data: { quantity: newQuantity } })
+          updateCartItem({
+            itemId: cartEntry._id,
+            data: { quantity: newQuantity },
+          })
         ).unwrap();
         setQuantity(newQuantity);
         toast.success("Quantity updated", { icon: <ShoppingCart /> });
@@ -223,7 +232,10 @@ const ProductCard = ({
       if (isInCart && cartEntry) {
         // Update existing cart item
         await dispatch(
-          updateCartItem({ itemId: cartEntry._id, data: { quantity: newQuantity } })
+          updateCartItem({
+            itemId: cartEntry._id,
+            data: { quantity: newQuantity },
+          })
         ).unwrap();
         setQuantity(newQuantity);
         toast.success("Quantity updated", { icon: <ShoppingCart /> });
@@ -296,7 +308,10 @@ const ProductCard = ({
       } else {
         // Add to wishlist
         await dispatch(
-          addToWishlist({ productId: product._id, priceWhenAdded: product.price })
+          addToWishlist({
+            productId: product._id,
+            priceWhenAdded: product.price,
+          })
         ).unwrap();
         setIsInWishlist(true);
         toast.success("Added to wishlist", { icon: <Heart /> });
@@ -311,12 +326,15 @@ const ProductCard = ({
   return (
     <div
       className={cn(
-        "w-full h-full flex flex-col rounded-lg shadow-lg overflow-hidden bg-white",
+        "w-full h-full flex flex-col rounded-lg overflow-hidden bg-white",
+        // ⭐ UPDATED: Grid borders with hover effect only on desktop
+        "border-2 border-gray-200 sm:hover:border-yellow-400 sm:hover:shadow-xl transition-all duration-300",
         isOutOfStock && "opacity-75"
       )}
     >
       {/* Product Image with Stock Overlay and Wishlist Button */}
-      <div className="relative aspect-square w-full">
+      <div className="relative aspect-square w-full border-b-2 border-gray-200">
+        {/* ⭐ ADDED: border-b-2 border-gray-200 to separate image section */}
         <LazyImage
           src={product.images[0] ?? ""}
           alt={product.name}
@@ -334,16 +352,15 @@ const ProductCard = ({
             )
           }
         />
-
         {/* Wishlist button */}
         <button
           onClick={handleWishToggle}
-          className="absolute top-3 right-3 z-10 bg-white rounded-full p-1.5 sm:p-2 shadow-md hover:shadow-lg transition-all"
+          className="absolute top-3 right-3 z-10 bg-white rounded-full p-1.5 sm:p-2 shadow-md sm:hover:shadow-lg transition-all"
           disabled={isWishLoading}
         >
           <Heart
             className={cn(
-              "w-4 h-4 sm:w-5 sm:h-5 hover:stroke-red-500 hover:scale-110 transition-all duration-150",
+              "w-4 h-4 sm:w-5 sm:h-5 sm:hover:stroke-red-500 sm:hover:scale-110 transition-all duration-150",
               isInWishlist && "stroke-red-500 fill-red-500",
               isWishLoading && "animate-pulse"
             )}
@@ -359,9 +376,11 @@ const ProductCard = ({
         </h3>
 
         {/* Weight and Price in same row */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between border-t border-gray-200 pt-2">
+          {/* ⭐ ADDED: border-t border-gray-200 pt-2 to separate price section */}
           <span className="text-gray-600 text-sm sm:text-base">
-            {product.weight.number}{product.weight.unit}
+            {product.weight.number}
+            {product.weight.unit}
           </span>
           <span className="text-base sm:text-lg font-bold text-gray-900">
             ₹{product.price}
@@ -384,13 +403,15 @@ const ProductCard = ({
 
         {/* Quantity Selector - Only show when not out of stock */}
         {!isOutOfStock && (
-          <div className="flex items-center justify-center gap-2 py-1">
+          <div className="flex items-center justify-center gap-2 py-1 border-t border-gray-200 pt-2">
             <Button
               variant="ghost"
               size="sm"
               onClick={handleQuantityDecrease}
-              disabled={quantity <= 1 || isCartLoading || loadingMinus || loadingPlus}
-              className="h-7 w-7 p-0 hover:bg-gray-200"
+              disabled={
+                quantity <= 1 || isCartLoading || loadingMinus || loadingPlus
+              }
+              className="h-7 w-7 p-0 sm:hover:bg-gray-200 border border-gray-300"
             >
               {loadingMinus ? (
                 <Loader2 className="w-3 h-3 animate-spin" />
@@ -398,7 +419,6 @@ const ProductCard = ({
                 <Minus className="w-3 h-3" />
               )}
             </Button>
-
             <span className="px-2 text-sm font-medium min-w-[2ch] text-center">
               {loadingPlus || loadingMinus ? (
                 <Loader2 className="w-3 h-3 animate-spin mx-auto" />
@@ -406,7 +426,6 @@ const ProductCard = ({
                 quantity
               )}
             </span>
-
             <Button
               variant="ghost"
               size="sm"
@@ -417,7 +436,7 @@ const ProductCard = ({
                 loadingMinus ||
                 loadingPlus
               }
-              className="h-7 w-7 p-0 hover:bg-gray-200"
+              className="h-7 w-7 p-0 sm:hover:bg-gray-200 border border-gray-300"
             >
               {loadingPlus ? (
                 <Loader2 className="w-3 h-3 animate-spin" />
@@ -431,7 +450,8 @@ const ProductCard = ({
         {/* Add to Cart / Go to Cart Button */}
         <Button
           className={cn(
-            "flex justify-center items-center gap-2 w-full text-xs sm:text-sm mt-auto",
+            "flex justify-center items-center gap-2 w-full text-xs sm:text-sm mt-auto border-t-2 border-gray-200 pt-2",
+            // ⭐ ADDED: border-t-2 border-gray-200 pt-2 to separate button section
             isOutOfStock && "opacity-50 cursor-not-allowed"
           )}
           variant={isOutOfStock ? "secondary" : "default"}
@@ -459,6 +479,7 @@ const ProductCard = ({
   );
 };
 
+// ==================== MAIN COMPONENT ====================
 export const CategoriesPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { name } = useParams<{ name: string }>();
@@ -466,7 +487,9 @@ export const CategoriesPage = () => {
   const categories = useSelector(selectCategories);
   const categoriesLoading = useSelector(selectCategoryLoading);
   const allProducts = useSelector((state: RootState) => state.product.products);
-  const categoryProducts = useSelector((state: RootState) => state.product.categoryProducts);
+  const categoryProducts = useSelector(
+    (state: RootState) => state.product.categoryProducts
+  );
 
   // Get actual cart and wishlist data from Redux
   const cartItems = useSelector((state: RootState) => state.cart.items);
@@ -480,19 +503,17 @@ export const CategoriesPage = () => {
   const sortProductsByStock = (productsArray: Product[]) => {
     if (!productsArray || productsArray.length === 0) return [];
     return [...productsArray].sort((a, b) => {
-      // If 'a' is in stock and 'b' is out of stock, 'a' should come first
-      if (a.stock > 0 && b.stock === 0) return -1;
-      // If 'a' is out of stock and 'b' is in stock, 'b' should come first
-      if (a.stock === 0 && b.stock > 0) return 1;
-      // If both have same stock status, maintain original order
+      if (a.stock > 0 && b.stock <= 0) return -1;
+      if (a.stock <= 0 && b.stock > 0) return 1;
       return 0;
     });
   };
 
   // Create a combined products array for wishlist mapping
-  const allAvailableProducts = [...(allProducts || []), ...(categoryProducts || [])];
-  const uniqueProducts = allAvailableProducts.filter((product, index, self) =>
-    index === self.findIndex(p => p._id === product._id)
+  const allAvailableProducts = [...allProducts, ...categoryProducts];
+  const uniqueProducts = allAvailableProducts.filter(
+    (product, index, self) =>
+      index === self.findIndex((p) => p._id === product._id)
   );
 
   useEffect(() => {
@@ -519,8 +540,9 @@ export const CategoriesPage = () => {
       productsToSort = categoryProducts;
     }
 
-    // Sort products to show in-stock first, out-of-stock last
-    const sortedProducts = productsToSort ? sortProductsByStock(productsToSort) : [];
+    const sortedProducts = productsToSort
+      ? sortProductsByStock(productsToSort)
+      : [];
     setProducts(sortedProducts);
   }, [allProducts, categoryProducts, currentCategory]);
 
@@ -538,12 +560,16 @@ export const CategoriesPage = () => {
     return category?.name ?? "Category";
   };
 
-  const ALL_PRODUCTS_IMAGE_URL = "https://res.cloudinary.com/dwocbguvr/image/upload/v1765187651/Untitled_design_7_t4twix_jlhkev.webp";
+  const ALL_PRODUCTS_IMAGE_URL =
+    "/public/assets/allproducts.webp";
 
   return (
-    <div className="mt-[56px] font-[quicksand] flex w-full min-h-[calc(100vh-56px)]">
+    <div className="mt-[56px] font-[Quicksand] flex w-full min-h-[calc(100vh-56px)]">
       {/* Desktop Sidebar */}
-      <section id="side-bar" className="w-[300px] sm:block hidden p-4 relative border-r h">
+      <section
+        id="side-bar"
+        className="w-[300px] sm:block hidden p-4 relative border-r h"
+      >
         <div className="flex flex-col items-center gap-4">
           {/* Add "All Products" option */}
           <Link
@@ -551,7 +577,7 @@ export const CategoriesPage = () => {
               "transition-all duration-150 py-4 w-full rounded-md text-center",
               currentCategory === "all"
                 ? "bg-yellow-300 text-white"
-                : "hover:bg-gray-200"
+                : "sm:hover:bg-gray-200"
             )}
             to="/category/all"
             onClick={() => setCurrentCategory("all")}
@@ -565,7 +591,7 @@ export const CategoriesPage = () => {
                 "transition-all duration-150 py-4 w-full rounded-md text-center",
                 currentCategory === cat._id
                   ? "bg-yellow-300 text-white"
-                  : "hover:bg-gray-200"
+                  : "sm:hover:bg-gray-200"
               )}
               to={`/category/${cat._id}`}
               onClick={() => setCurrentCategory(cat._id)}
@@ -576,10 +602,11 @@ export const CategoriesPage = () => {
         </div>
       </section>
 
+      {/* Products Section */}
       <section id="products" className="p-4 sm:p-6 flex-1">
         {/* Mobile Header with Back Button and Category Dropdown */}
         <div className="sm:hidden flex items-center justify-between mb-4">
-          <Link to={"/"}>
+          <Link to="/">
             <ChevronLeft className="hover:scale-125 transition-all duration-300" />
           </Link>
 
@@ -591,7 +618,12 @@ export const CategoriesPage = () => {
             >
               <Menu className="w-4 h-4" />
               <span>{getCategoryName()}</span>
-              <ChevronDown className={cn("w-4 h-4 transition-transform", mobileDropdownOpen && "rotate-180")} />
+              <ChevronDown
+                className={cn(
+                  "w-4 h-4 transition-transform",
+                  mobileDropdownOpen && "rotate-180"
+                )}
+              />
             </Button>
 
             {/* Dropdown Menu */}
@@ -605,8 +637,9 @@ export const CategoriesPage = () => {
                     setMobileDropdownOpen(false);
                   }}
                   className={cn(
-                    "block px-4 py-3 hover:bg-gray-100 transition-colors border-b border-gray-100",
-                    currentCategory === "all" && "bg-yellow-50 text-yellow-600 font-medium"
+                    "block px-4 py-3 sm:hover:bg-gray-100 transition-colors border-b border-gray-100",
+                    currentCategory === "all" &&
+                    "bg-yellow-50 text-yellow-600 font-medium"
                   )}
                 >
                   All Products
@@ -622,8 +655,9 @@ export const CategoriesPage = () => {
                       setMobileDropdownOpen(false);
                     }}
                     className={cn(
-                      "block px-4 py-3 hover:bg-gray-100 transition-colors border-b border-gray-100 last:border-b-0",
-                      cat._id === currentCategory && "bg-yellow-50 text-yellow-600 font-medium"
+                      "block px-4 py-3 sm:hover:bg-gray-100 transition-colors border-b border-gray-100 last:border-b-0",
+                      cat._id === currentCategory &&
+                      "bg-yellow-50 text-yellow-600 font-medium"
                     )}
                   >
                     {cat.name}
@@ -634,11 +668,10 @@ export const CategoriesPage = () => {
           </div>
         </div>
 
-        {/* Desktop Back Button (hidden on mobile) */}
-        <Link className="hidden sm:block" to={"/"}>
+        {/* Desktop Back Button - hidden on mobile */}
+        <Link className="hidden sm:block" to="/">
           <ChevronLeft className="hover:scale-125 transition-all duration-300 mb-4 top-4 left-4" />
         </Link>
-
 
         {/* Category banner with lazy loading */}
         <div className="mb-6">
@@ -650,7 +683,9 @@ export const CategoriesPage = () => {
             />
           ) : categories.find((cat) => cat._id === currentCategory)?.image ? (
             <LazyImage
-              src={categories.find((cat) => cat._id === currentCategory)?.image || ""}
+              src={
+                categories.find((cat) => cat._id === currentCategory)?.image!
+              }
               alt={`${getCategoryName()} Banner`}
               className="w-full h-80 rounded object-cover"
             />
@@ -661,28 +696,36 @@ export const CategoriesPage = () => {
           )}
         </div>
 
-        {/* Products Grid - Adjusted for consistent card sizes */}
-        <div className="py-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 auto-rows-fr" id="product-list">
-          {!products && <Loader2 className="w-4 h-4 animate-spin" />}
-          {products?.length === 0 && <p className="col-span-full text-center font-[quicksand] text-yellow-600 w-full h-full">No products under this category!</p>}
-          {products?.map((product) => {
-            return (
+        {/* ⭐ UPDATED: Products Grid with better spacing for grid lines */}
+        <div
+          className="py-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 auto-rows-fr"
+          id="product-list"
+        >
+          {!products ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : products?.length === 0 ? (
+            <p className="col-span-full text-center font-quicksand text-yellow-600 w-full h-full">
+              No products under this category!
+            </p>
+          ) : (
+            products?.map((product) => (
               <Link
                 key={product._id}
                 to={`/product/${product._id}`}
-                className="block hover:scale-105 transition-transform duration-200 h-full"
+                className="block sm:hover:scale-102 transition-transform duration-200 h-full"
               >
                 <ProductCard
                   product={product}
                   currentCart={cartItems}
                   currentWishList={wishlistItems
-                    .map(item => uniqueProducts.find(p => p._id === item.product))
-                    .filter((p): p is Product => !!p)
-                  }
+                    .map((item) =>
+                      uniqueProducts.find((p) => p._id === item.product)
+                    )
+                    .filter((p): p is Product => !!p)}
                 />
               </Link>
-            );
-          })}
+            ))
+          )}
         </div>
       </section>
 

@@ -363,13 +363,13 @@ const CartItemComponent: React.FC<CartItemProps> = ({ item, dispatch }) => {
     try {
       await dispatch(removeCartItem(item._id)).unwrap();
       toast.success("Product removed from cart!", {
-        className: "font-[Quicksand]",
+        className: "font-Quicksand",
         icon: <ToastSuccess />,
       });
       dispatch(fetchCartDetails());
     } catch {
       toast.error("Failed to remove product.", {
-        className: "font-[Quicksand]",
+        className: "font-Quicksand",
         icon: <ToastFaliure />,
       });
     }
@@ -383,13 +383,13 @@ const CartItemComponent: React.FC<CartItemProps> = ({ item, dispatch }) => {
         updateCartItem({ itemId: item._id, data: { quantity: newQty } })
       ).unwrap();
       toast.success("Quantity updated!", {
-        className: "font-[Quicksand]",
+        className: "font-Quicksand",
         icon: <ToastSuccess />,
       });
       dispatch(fetchCartDetails());
     } catch {
       toast.error("Failed to update quantity.", {
-        className: "font-[Quicksand]",
+        className: "font-Quicksand",
         icon: <ToastFaliure />,
       });
       setCount(item.quantity);
@@ -413,51 +413,77 @@ const CartItemComponent: React.FC<CartItemProps> = ({ item, dispatch }) => {
   };
 
   return (
-    <div className="grid grid-cols-12 gap-4 items-center py-4">
-      {/* Product column */}
-      <div className="col-span-6 flex items-center gap-4">
-        <div className="relative">
+    <div className="grid grid-cols-12 gap-2 sm:gap-4 items-center py-4 relative">
+      {/* Product column - takes more space */}
+      <div className="col-span-12 sm:col-span-6 flex items-center gap-3 sm:gap-4">
+        <div className="relative flex-shrink-0">
           <img
             src={product.images?.[0] ?? "default-image.png"}
             width={56}
             height={56}
-            className="object-cover rounded-md w-14 h-14"
+            className="object-cover rounded-md w-12 h-12 sm:w-14 sm:h-14"
             alt={product.name}
           />
+          {/* Small cross button on image - hidden on mobile for better UX */}
           <Button
             disabled={isCartUpdating}
-            className="absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full bg-red-500 hover:bg-red-600 hover:scale-110 transition-all"
+            className="hidden sm:flex absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full bg-red-500 hover:bg-red-600 hover:scale-110 transition-all shadow-md"
             onClick={handleRemove}
+            aria-label="Remove item"
           >
-            <X className="w-3 h-3" />
+            <X className="w-3 h-3 text-white" />
           </Button>
         </div>
         <div className="flex-1 min-w-0">
-          <h4 className="text-gray-800 font-semibold truncate">{product.name}</h4>
+          <h4 className="text-gray-800 font-semibold text-sm sm:text-base truncate">
+            {product.name}
+          </h4>
           {product?.weight && (
             <p className="text-gray-600 text-xs">
               {product.weight.number}
               {product.weight.unit}
             </p>
           )}
+          {/* Mobile price - shown only on small screens */}
+          <p className="text-gray-700 font-medium text-sm sm:hidden mt-1">
+            ₹{product.price}
+          </p>
         </div>
+        {/* Visible Remove button on mobile */}
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={isCartUpdating}
+          className="sm:hidden flex-shrink-0 h-8 px-2 border-red-500 text-red-500 hover:bg-red-50 hover:text-red-600"
+          onClick={handleRemove}
+          aria-label="Remove item"
+        >
+          <X className="w-4 h-4" />
+        </Button>
       </div>
 
-      {/* Price column */}
-      <div className="col-span-2 text-gray-700 text-center">₹{product.price}</div>
+      {/* Price column - hidden on mobile (shown in product name area) */}
+      <div className="hidden sm:block sm:col-span-2 text-gray-700 text-center">
+        ₹{product.price}
+      </div>
 
       {/* Quantity column */}
-      <div className="col-span-2 flex items-center gap-2 justify-center">
+      <div className="col-span-8 sm:col-span-2 flex items-center gap-2 justify-start sm:justify-center">
+        <span className="text-xs sm:text-sm text-gray-600 sm:hidden mr-1">Qty:</span>
         <Button
           variant="ghost"
           disabled={count <= 1 || isCartUpdating || loadingMinus}
           size="sm"
-          className="h-8 w-8 p-0"
+          className="h-7 w-7 sm:h-8 sm:w-8 p-0 border border-gray-300"
           onClick={onMinusClick}
         >
-          {loadingMinus ? <Loader2 className="animate-spin w-3 h-3" /> : <Minus className="w-3 h-3" />}
+          {loadingMinus ? (
+            <Loader2 className="animate-spin w-3 h-3" />
+          ) : (
+            <Minus className="w-3 h-3" />
+          )}
         </Button>
-        <span className="w-8 text-center font-medium">
+        <span className="w-8 text-center font-medium text-sm">
           {isCartUpdating && !loadingMinus && !loadingPlus ? (
             <Loader2 className="animate-spin w-3 h-3 mx-auto" />
           ) : (
@@ -468,20 +494,39 @@ const CartItemComponent: React.FC<CartItemProps> = ({ item, dispatch }) => {
           variant="ghost"
           disabled={isCartUpdating || loadingPlus}
           size="sm"
-          className="h-8 w-8 p-0"
+          className="h-7 w-7 sm:h-8 sm:w-8 p-0 border border-gray-300"
           onClick={onPlusClick}
         >
-          {loadingPlus ? <Loader2 className="animate-spin w-3 h-3" /> : <Plus className="w-3 h-3" />}
+          {loadingPlus ? (
+            <Loader2 className="animate-spin w-3 h-3" />
+          ) : (
+            <Plus className="w-3 h-3" />
+          )}
         </Button>
       </div>
 
       {/* Total column */}
-      <div className="col-span-2 text-gray-700 text-right font-medium">
+      <div className="col-span-4 sm:col-span-2 text-gray-700 text-right font-medium text-sm sm:text-base">
         {isCartUpdating && !loadingMinus && !loadingPlus ? (
           <Loader2 className="animate-spin inline-block w-4 h-4" />
         ) : (
           `₹${product.price * count}`
         )}
+      </div>
+
+      {/* Desktop Remove button - separate column for better visibility */}
+      <div className="hidden sm:block sm:col-span-12 sm:absolute sm:right-0 sm:top-1/2 sm:-translate-y-1/2">
+        <Button
+          variant="ghost"
+          size="sm"
+          disabled={isCartUpdating}
+          className="text-red-500 hover:text-red-700 hover:bg-red-50 h-8 px-3"
+          onClick={handleRemove}
+          aria-label="Remove item"
+        >
+          <X className="w-4 h-4 mr-1" />
+          <span className="text-xs">Remove</span>
+        </Button>
       </div>
     </div>
   );

@@ -16,6 +16,8 @@ import { CartItem } from "../../redux1/cartSlice";
 import { WishlistItem } from "../../redux1/wishlistSlice";
 import { AuthComponent } from "./AuthComponent";
 
+
+
 export const HomePageNavBar = () => {
     const categories = useSelector<RootState, Category[]>(
       (state) => state.category.categories
@@ -30,6 +32,8 @@ export const HomePageNavBar = () => {
       (state) => state.wishlist.items
     );
 
+
+
     const [, setCurrentWishList] = useState<Product[]>(
       wishlistItems?.map((item) => {
         if (typeof item.product === "object") return item.product as Product;
@@ -41,6 +45,8 @@ export const HomePageNavBar = () => {
     const productsLinkRef = useRef<HTMLDivElement | null>(null);
     const navigate = useNavigate();
 
+
+
     useEffect(() => {
         setCurrentWishList(
           wishlistItems?.map((item) =>
@@ -50,18 +56,26 @@ export const HomePageNavBar = () => {
         setCurrentCart(cartItems || []);
     }, [wishlistItems, cartItems]);
 
+
+
     const [isProductPageVisible, setIsProductPageVisible] = useState(false);
     const [isHamburgerMenuOpen, setIsHamburgerMenuOpen] = useState(false);
     const [dropdownPosition, setDropdownPosition] = useState<'left' | 'center' | 'right'>('left');
     const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 
+
+
     const dispatch = useDispatch<AppDispatch>();
     const user = useSelector((state: RootState) => state.auth.user);
     const loading = useSelector((state: RootState) => state.auth.profileLoading);
 
+
+
     useEffect(() => {
         if (!user) dispatch(getProfile());
     }, [dispatch, user]);
+
+
 
     // Calculate dropdown position based on viewport
     const calculateDropdownPosition = () => {
@@ -82,6 +96,8 @@ export const HomePageNavBar = () => {
         }
     };
 
+
+
     const handleMouseEnter = () => {
         calculateDropdownPosition();
         setIsProductPageVisible(true);
@@ -91,6 +107,8 @@ export const HomePageNavBar = () => {
             dispatch(getAllProducts());
         }
     };
+
+
 
     const getDropdownClasses = () => {
         const baseClasses = "absolute p-4 rounded-lg top-full bg-white shadow-xl border border-gray-200 z-50 min-w-[300px] max-w-[800px] w-auto";
@@ -105,9 +123,13 @@ export const HomePageNavBar = () => {
         }
     };
 
+
+
     const toggleCategory = (categoryId: string) => {
         setExpandedCategory(expandedCategory === categoryId ? null : categoryId);
     };
+
+
 
     // Ensure dropdown fits in viewport
     useEffect(() => {
@@ -121,6 +143,8 @@ export const HomePageNavBar = () => {
         return () => window.removeEventListener('resize', handleResize);
     }, [isProductPageVisible]);
 
+
+
     // CRITICAL FIX: Load products when component mounts
     useEffect(() => {
         // Always ensure products are loaded, regardless of which page we're on
@@ -130,6 +154,8 @@ export const HomePageNavBar = () => {
         }
     }, [dispatch, productDataFromStore]);
 
+
+
     useEffect(() => {
         //console.log("=== NAVBAR PRODUCT DEBUG ===");
         //console.log("Current page path:", window.location.pathname);
@@ -137,6 +163,8 @@ export const HomePageNavBar = () => {
         //console.log("Available products:", productDataFromStore?.length || 0);
         // ... more debug info
     }, [categories, productDataFromStore]);
+
+
 
     return (
         <div className="z-[100] font-[quicksand] bg-white scroll-smooth w-full top-0 fixed justify-center items-center flex h-14">
@@ -159,6 +187,8 @@ export const HomePageNavBar = () => {
                 <Link to={"/"} className="text-sm capitalize font-[quicksand] transition-all duration-150 hover:bg-slate-500/10 flex justify-center items-center px-2 py-1 rounded-sm">
                     HOME
                 </Link>
+
+
 
                 <Link to={"/about-us"} className="text-sm capitalize font-[quicksand] transition-all duration-150 hover:bg-slate-500/10 flex justify-center items-center px-2 py-1 rounded-sm">
                     ABOUT
@@ -206,6 +236,8 @@ export const HomePageNavBar = () => {
                                 >
                                     VIEW ALL PRODUCTS
                                 </Link>
+
+
 
                                 {/* ADD THE LOADING STATE HERE */}
                                 {(!productDataFromStore || productDataFromStore.length === 0) && (
@@ -282,6 +314,8 @@ export const HomePageNavBar = () => {
                     )}
                 </div>
 
+
+
                 <Link to={"/blog"} className="text-sm capitalize transition-all duration-150 hover:bg-slate-500/10 flex justify-center items-center px-2 py-1 rounded-sm">
                     BLOG
                 </Link>
@@ -290,6 +324,8 @@ export const HomePageNavBar = () => {
                     CONTACT
                 </Link>
             </div>
+
+
 
             {/* Mobile menu */}
             <div className="sm:hidden block">
@@ -353,20 +389,34 @@ export const HomePageNavBar = () => {
                 </Menu>
             </div>
 
+
+
             {/* Logo */}
             <Link className="ml-[100px]" to={"/"}>
                 <img className="h-20" src="/logo.png" />
             </Link>
 
+
+
             <div className="justify-between gap-4 items-center flex flex-1">
-                <div className="flex-1 flex justify-end mr-4 gap-4 items-center">
-                    <Link to={"/wishlist"} onClick={() => {
-                    }} className="transition-all z-[0] hover:scale-125 duration-250 hover:fill-red-500 relative">
-                        {wishlistItems?.length == 0? (<HeartCrack className="transition-all"/>) : (<LucideHeart className="fill-red-500 stroke-red-500 transition-all"/>)}
-                        <Badge className="absolute z-0 right-[-25%] top-[-25%] text-[10px] rounded-full px-1 py-0" variant={"secondary"}>{wishlistItems?.length}</Badge>
+                <div className="flex-1 flex justify-end mr-4 gap-3 sm:gap-4 items-center">
+                    {/* ⭐ Desktop Wishlist - Only visible on desktop */}
+                    <Link 
+                        to={"/wishlist"} 
+                        onClick={() => {}} 
+                        className="hidden sm:block transition-all z-[0] hover:scale-125 duration-250 hover:fill-red-500 relative"
+                    >
+                        {wishlistItems?.length === 0 ? (
+                            <HeartCrack className="transition-all"/>
+                        ) : (
+                            <LucideHeart className="fill-red-500 stroke-red-500 transition-all"/>
+                        )}
+                        <Badge className="absolute z-0 right-[-25%] top-[-25%] text-[10px] rounded-full px-1 py-0" variant={"secondary"}>
+                            {wishlistItems?.length}
+                        </Badge>
                     </Link>
                     
-                    {/* User profile section */}
+                    {/* ⭐ User profile section - Different for logged in/out */}
                     {!user ? (
                       <Popover>
                         <PopoverTrigger asChild>
@@ -374,31 +424,93 @@ export const HomePageNavBar = () => {
                             <UserCircle2 className="w-8 h-8" />
                           </Button>
                         </PopoverTrigger>
-                        <PopoverContent side="bottom" sideOffset={8} className="p-4 w-64">
-                          <Button onClick={() => navigate('/auth')}>
-                            <LogIn className="mr-2" /> Google Login
-                          </Button>
+                        <PopoverContent side="bottom" sideOffset={8} className="p-3 w-56">
+                          <div className="flex flex-col gap-2">
+                            {/* ⭐ Wishlist for non-logged-in users (Mobile only) */}
+                            <Button
+                              variant="ghost"
+                              className="sm:hidden w-full justify-start px-2 py-2 h-auto"
+                              onClick={() => navigate("/wishlist")}
+                            >
+                              <LucideHeart className="w-4 h-4 mr-2" />
+                              <span className="flex-1 text-left text-sm">My Wishlist</span>
+                              {wishlistItems?.length > 0 && (
+                                <Badge variant="secondary" className="text-xs px-1.5 py-0">
+                                  {wishlistItems?.length}
+                                </Badge>
+                              )}
+                            </Button>
+
+                            {/* Divider for mobile */}
+                            <div className="sm:hidden border-t my-1"></div>
+
+                            {/* Google Login Button */}
+                            <Button onClick={() => navigate('/auth')} className="w-full">
+                              <LogIn className="mr-2 w-4 h-4" /> 
+                              <span className="text-sm">Google Login</span>
+                            </Button>
+                          </div>
                         </PopoverContent>
                       </Popover>
                     ) : loading ? (
                       <LoaderCircle className="animate-spin" />
                     ) : (
-                      <Button 
-                        variant="ghost" 
-                        onClick={() => navigate('/profile')}
-                        className="p-2"
-                      >
-                        <Avatar sx={{ width: 32, height: 32 }}>
-                          {user.firstName.charAt(0)}
-                        </Avatar>
-                      </Button>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button variant="ghost" className="p-2">
+                            <Avatar sx={{ width: 32, height: 32 }}>
+                              {user.firstName.charAt(0)}
+                            </Avatar>
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent side="bottom" sideOffset={8} className="p-3 w-56">
+                          <div className="flex flex-col gap-2">
+                            {/* User Info - Desktop only */}
+                            <div className="hidden sm:block border-b pb-2 mb-1">
+                              <p className="font-semibold text-sm truncate">
+                                {user.firstName} {user.lastName}
+                              </p>
+                              <p className="text-xs text-gray-600 truncate">{user.email}</p>
+                            </div>
+
+                            {/* ⭐ My Wishlist Button (Mobile only) */}
+                            <Button
+                              variant="ghost"
+                              className="sm:hidden w-full justify-start px-2 py-2 h-auto"
+                              onClick={() => navigate("/wishlist")}
+                            >
+                              <LucideHeart className="w-4 h-4 mr-2" />
+                              <span className="flex-1 text-left text-sm">My Wishlist</span>
+                              {wishlistItems?.length > 0 && (
+                                <Badge variant="secondary" className="text-xs px-1.5 py-0">
+                                  {wishlistItems?.length}
+                                </Badge>
+                              )}
+                            </Button>
+
+                            {/* ⭐ My Profile Button */}
+                            <Button
+                              variant="ghost"
+                              className="w-full justify-start px-2 py-2 h-auto"
+                              onClick={() => navigate("/profile")}
+                            >
+                              <UserCircle2 className="w-4 h-4 mr-2" />
+                              <span className="text-sm">My Profile</span>
+                            </Button>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
                     )}
+
+
 
                     <Link to={"/cart"} className="flex gap-4 items-center justify-center relative">
                         <Button className="flex gap-4 items-center justify-center relative">
                             <ShoppingCart />
                             <span className="sm:block hidden">Cart</span>
-                            <Badge className="absolute right-[-8%] top-[-18%] rounded-full px-1 py-0" variant={"secondary"}>{currentCart?.length}</Badge>
+                            <Badge className="absolute right-[-8%] top-[-18%] rounded-full px-1 py-0" variant={"secondary"}>
+                                {currentCart?.length}
+                            </Badge>
                         </Button>
                     </Link>
                 </div>
