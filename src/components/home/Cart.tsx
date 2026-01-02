@@ -363,13 +363,13 @@ const CartItemComponent: React.FC<CartItemProps> = ({ item, dispatch }) => {
     try {
       await dispatch(removeCartItem(item._id)).unwrap();
       toast.success("Product removed from cart!", {
-        className: "font-quicksand",
+        className: "font-[Quicksand]",
         icon: <ToastSuccess />,
       });
       dispatch(fetchCartDetails());
     } catch {
       toast.error("Failed to remove product.", {
-        className: "font-quicksand",
+        className: "font-[Quicksand]",
         icon: <ToastFaliure />,
       });
     }
@@ -383,13 +383,13 @@ const CartItemComponent: React.FC<CartItemProps> = ({ item, dispatch }) => {
         updateCartItem({ itemId: item._id, data: { quantity: newQty } })
       ).unwrap();
       toast.success("Quantity updated!", {
-        className: "font-quicksand",
+        className: "font-[Quicksand]",
         icon: <ToastSuccess />,
       });
       dispatch(fetchCartDetails());
     } catch {
       toast.error("Failed to update quantity.", {
-        className: "font-quicksand",
+        className: "font-[Quicksand]",
         icon: <ToastFaliure />,
       });
       setCount(item.quantity);
@@ -762,7 +762,7 @@ export const Cart: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex font-quicksand text-sm items-center min-h-[calc(100vh-56px)] justify-center flex-col w-full mt-14">
+      <div className="flex font-[Quicksand] text-sm items-center min-h-[calc(100vh-56px)] justify-center flex-col w-full mt-14">
         <Loader2 className="animate-spin w-8 h-8" />
         <p className="mt-2">Loading cart...</p>
       </div>
@@ -772,9 +772,9 @@ export const Cart: React.FC = () => {
   return (
     <div
       id="cart-page"
-      className="flex font-quicksand text-sm items-center min-h-[calc(100vh-56px)] justify-center py-5 flex-col w-full mt-14"
+      className="flex font-[Quicksand] text-sm items-center min-h-[calc(100vh-56px)] justify-center py-5 flex-col w-full mt-14"
     >
-      <h1 className="font-quicksand mb-4 text-xl">Shopping cart</h1>
+      <h1 className="font-[Quicksand] mb-4 text-xl">Shopping cart</h1>
       <div className="w-full max-w-6xl px-4">
         {/* Cart Items Section */}
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
@@ -788,7 +788,7 @@ export const Cart: React.FC = () => {
 
           {/* Empty Cart Message */}
           {!cartItems || cartItems?.length === 0 ? (
-            <div className="text-xl font-quicksand w-full text-center py-20 font-bold text-gray-500">
+            <div className="text-xl font-[Quicksand] w-full text-center py-20 font-bold text-gray-500">
               Cart empty!!
             </div>
           ) : (

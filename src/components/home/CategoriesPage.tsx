@@ -354,7 +354,7 @@ const ProductCard = ({
       {/* Content section */}
       <div className="w-full flex flex-col gap-2 p-3 sm:p-4 flex-grow">
         {/* Product name */}
-        <h3 className="font-quicksand text-base sm:text-lg font-semibold line-clamp-2 min-h-[2.5rem] sm:min-h-[3rem]">
+        <h3 className="font-[Quicksand] text-base sm:text-lg font-semibold line-clamp-2 min-h-[2.5rem] sm:min-h-[3rem]">
           {product.name}
         </h3>
 
