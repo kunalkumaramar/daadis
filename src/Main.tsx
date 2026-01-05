@@ -30,12 +30,14 @@ import  GoogleCallback  from "./components/home/GoogleCallback";
 import { AuthComponent } from "./components/home/AuthComponent";
 import ProfilePage  from "./components/home/ProfilePage";
 import { Manufacturer } from "./components/home/Manufacturer";
+
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path="/">
             <Route path="auth/google/callback" element={<GoogleCallback />} />
             <Route path="auth" element={<AuthComponent />} />
             <Route path="profile" element={<ProfilePage />} />
+            <Route path="payment-success" element={<PaymentSuccess />} />
             <Route path="" element={<App />}>
                 <Route path="" element={<HomePage />} />
                 <Route path="set-shipping" element={<SetShipping />} />

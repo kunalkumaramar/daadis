@@ -825,7 +825,14 @@ export const Cart: React.FC = () => {
 
             toast.success("Payment successful!");
             await dispatch(clearCart()).unwrap();
-            navigate("/profile");
+            navigate("/payment-success", {
+              state: {
+                paymentId: response.razorpay_payment_id,
+                orderId: response.razorpay_order_id,
+                amount: grandTotal,
+                timestamp: new Date().toISOString(),
+              },
+            });
           } catch (error) {
             const err = error as Error;
             console.error("Payment verification error:", err);
