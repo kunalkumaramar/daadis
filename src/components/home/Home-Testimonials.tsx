@@ -38,7 +38,7 @@ const testimonials: TestimonialItem[] = [
       "This product has revolutionized our workflow. The seamless integration and intuitive design have boosted our team's productivity by 40%. Absolutely game-changing!",
     avatar: "",
     videoUrl:
-      "https://res.cloudinary.com/dwocbguvr/video/upload/v1765187641/Daadi_s_v3_ibxg8u_blfcc3.mp4",
+      "/assets/testimonials/Daadi's v3.mp4",
   },
   {
     id: 2,
@@ -48,7 +48,7 @@ const testimonials: TestimonialItem[] = [
     content:
       "Daadis sweets remind me of authentic homemade mithai. The gulab jamuns were perfectly soft and not overly sweet. Truly feels like festive vibes in every bite!",
     avatar:
-      "https://res.cloudinary.com/dwocbguvr/image/upload/v1765187646/kv_pfe7ma_uayycy.webp",
+      "/assets/testimonials/kv.webp",
   },
   {
     id: 3,
@@ -59,7 +59,7 @@ const testimonials: TestimonialItem[] = [
       "From concept to execution, this solution exceeded all expectations. The creative possibilities it unlocks are endless, and our clients love the results.",
     avatar: "",
     videoUrl:
-      "https://res.cloudinary.com/dwocbguvr/video/upload/v1765187657/Daadi_s_v1_ojr5ns_xsqegi.mp4",
+      "/assets/testimonials/Daadi's v1.mp4",
   },
   {
     id: 4,
@@ -69,7 +69,7 @@ const testimonials: TestimonialItem[] = [
     content:
       "The khakhras are super crispy and fresh! I tried the masala flavor, and it’s the perfect evening snack with tea. Light, crunchy, and guilt-free.",
     avatar:
-      "https://res.cloudinary.com/dwocbguvr/image/upload/v1765187648/neer_vakwek_witwti.webp",
+      "/assets/testimonials/neer.webp",
   },
   {
     id: 5,
@@ -80,7 +80,7 @@ const testimonials: TestimonialItem[] = [
       "The automation features have streamlined our operations completely. What used to take hours now happens in minutes with incredible accuracy.",
     avatar: "",
     videoUrl:
-      "https://res.cloudinary.com/dwocbguvr/video/upload/v1765187639/Daadi_s_v4_izgcsf_bvy6sc.mp4",
+      "/assets/testimonials/Daadi's v4.mp4",
   },
   {
     id: 6,
@@ -91,7 +91,7 @@ const testimonials: TestimonialItem[] = [
       "This product has revolutionized our workflow. The seamless integration and intuitive design have boosted our team's productivity by 40%. Absolutely game-changing!",
     avatar: "",
     videoUrl:
-      "https://res.cloudinary.com/dwocbguvr/video/upload/v1765187647/Daadi_s_v2_mnqmrh_o4wfgi.mp4",
+      "/assets/testimonials/Daadi's v2.mp4",
   },
   {
     id: 7,
@@ -101,7 +101,7 @@ const testimonials: TestimonialItem[] = [
     content:
       "I loved the namkeens! They are not oily and taste just like my grandmother recipes. The packaging could be better, but the taste makes up for it.",
     avatar:
-      "https://res.cloudinary.com/dwocbguvr/image/upload/v1765187641/kunal_vv24k0_hqcjxj.webp",
+      "/assets/testimonials/kunal.webp",
   },
   {
     id: 8,
@@ -111,7 +111,7 @@ const testimonials: TestimonialItem[] = [
     content:
       "Daadi’s products are pure nostalgia. The ladoos tasted exactly like homemade ones, full of ghee and love. Definitely ordering again for Diwali.",
     avatar:
-      "https://res.cloudinary.com/dwocbguvr/image/upload/v1765187646/mohit_ou8dzd_uyvqoe.webp",
+      "/assets/testimonials/mohit.webp",
   },
   {
     id: 9,
@@ -121,7 +121,7 @@ const testimonials: TestimonialItem[] = [
     content:
       "The khakhras are wholesome and filling. I carry them to work, and they make a great healthy munch. A little more flavor variety would make it perfect.",
     avatar:
-      "https://res.cloudinary.com/dwocbguvr/image/upload/v1765187650/Rohan_rmeois_rxytw4.webp",
+      "/assets/testimonials/Rohan.webp",
   },
   {
     id: 10,
@@ -131,7 +131,7 @@ const testimonials: TestimonialItem[] = [
     content:
       "The taste is really authentic and homemade, not like commercial brands. The kaju katli was melt-in-mouth good. Slightly pricey, but worth it.",
     avatar:
-      "https://res.cloudinary.com/dwocbguvr/image/upload/v1765187647/nazid_s2h9h0_fooabt.webp",
+      "/assets/testimonials/nazid.webp",
   },
 ];
 

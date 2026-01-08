@@ -128,13 +128,11 @@ export const HomePage = () => {
   // Define your two Cloudinary image URLs for desktop and mobile here
   // Replace with actual URLs as needed
   const desktopImages = [
-    "https://res.cloudinary.com/dwocbguvr/image/upload/v1765187637/1_t8cmyw_qv6h6f.webp",
-    "https://res.cloudinary.com/dwocbguvr/image/upload/v1765187644/2_klbjcr_iereyc.webp", // Add your second desktop image URL
+    "/assets/desktop.webp", // Add your second desktop image URL
   ];
 
   const mobileImages = [
-    "https://res.cloudinary.com/dwocbguvr/image/upload/v1765187636/1_qkw3ll_qxp9pd.webp",
-    "https://res.cloudinary.com/dwocbguvr/image/upload/v1765187641/2_1_w6evhh_e6wwxh.webp", // Add your second mobile image URL
+    "/assets/mobile.webp", // Add your second mobile image URL
   ];
 
   return (
@@ -186,7 +184,7 @@ export const HomePage = () => {
   {/* First Video */}
   <div className="w-full max-w-[320px] md:w-[277px] mx-auto relative aspect-[9/16] rounded-md bg-white border border-gray-600/50">
     <video
-      src="https://res.cloudinary.com/dwocbguvr/video/upload/v1765187647/He_saves_he_blesses_he_protects_This_Chaturthi_let_s_offer_Bappa_what_he_loves_most_swe_iesfxn_uhfej2.mp4"
+      src="/assets/reel/reel1.mp4"
       controls
       autoPlay
       loop
@@ -201,7 +199,7 @@ export const HomePage = () => {
   {/* Second Video */}
   <div className="w-full max-w-[320px] md:w-[277px] mx-auto relative aspect-[9/16] rounded-md bg-white border border-gray-600/50">
     <video
-      src="https://res.cloudinary.com/dwocbguvr/video/upload/v1765187651/reel2_tgvnr6_dtpy6j.mp4"
+      src="/assets/reel/reel2.mp4"
       controls
       autoPlay
       loop
@@ -216,7 +214,7 @@ export const HomePage = () => {
   {/* Third Video */}
   <div className="w-full max-w-[320px] md:w-[277px] mx-auto relative aspect-[9/16] rounded-md bg-white border border-gray-600/50">
     <video
-      src="https://res.cloudinary.com/dwocbguvr/video/upload/v1765187651/reel3_gicop6_uzhfxa.mp4"
+      src="/assets/reel/reel3.mp4"
       controls
       autoPlay
       loop
